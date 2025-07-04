@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Reservations</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='reservations.css') }}">
+</head>
+<body>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul class="flashes">
+        {% for category, message in messages %}
+          <li class="alert {% if category %}alert-{{ category }}{% endif %}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+    <div class="reservations-container">
+        <h1>My Reservations</h1>
+        {% if reservations %}
+            <div class="reservations-list">
+                {% for r in reservations %}
+                <div class="reservation-card">
+                    <div class="res-header">
+                        <span class="res-number">#{{ r.reservation_number }}</span>
+                        <span class="res-status">{{ r.status|capitalize }}</span>
+                    </div>
+                    <div class="res-details">
+                        <div>
+                            <strong>Flight:</strong> {{ r.flight_no }}<br>
+                            <strong>From:</strong> {{ r.origin }} <strong>To:</strong> {{ r.destination }}
+                        </div>
+                        <div>
+                            <strong>Departure:</strong> {{ r.dep_time }}<br>
+                            <strong>Arrival:</strong> {{ r.arri_time }}
+                        </div>
+                        <div>
+                            <strong>Seats:</strong> {{ r.seats }}
+                        </div>
+                    </div>
+                    <div class="res-actions">
+                        <a href="/reservation/{{ r.reservation_number }}" class="view-btn">View</a>
+                        {% if r.status == 'active' %}
+                        <a href="/reservation/cancel/{{ r.reservation_number }}" class="cancel-btn">Cancel</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="no-res">You have no reservations yet.</p>
+        {% endif %}
+        <div class="back-link">
+            <a href="/dashboard">&larr; Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

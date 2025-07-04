@@ -1,0 +1,130 @@
+body {
+    background: #f4f6fb;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    color: #232946;
+}
+
+.reservations-container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 4px 24px rgba(44,62,80,0.08);
+    padding: 40px 32px 32px 32px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 32px;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.reservations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.reservation-card {
+    background: #f8fafc;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(44,62,80,0.06);
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-left: 5px solid #3498db;
+    transition: box-shadow 0.2s;
+}
+
+.reservation-card:hover {
+    box-shadow: 0 6px 24px rgba(44,62,80,0.13);
+}
+
+.res-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.08rem;
+    margin-bottom: 8px;
+}
+
+.res-number {
+    font-weight: 600;
+    color: #232946;
+}
+
+.res-status {
+    background: #e0e7ff;
+    color: #394867;
+    padding: 3px 12px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.res-details {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    font-size: 1rem;
+    color: #444;
+}
+
+.res-actions {
+    margin-top: 10px;
+}
+
+.view-btn, .cancel-btn {
+    display: inline-block;
+    padding: 7px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-right: 10px;
+    transition: background 0.18s;
+}
+
+.view-btn {
+    background: #3498db;
+    color: #fff;
+}
+
+.view-btn:hover {
+    background: #217dbb;
+}
+
+.cancel-btn {
+    background: #e63946;
+    color: #fff;
+}
+
+.cancel-btn:hover {
+    background: #b71c1c;
+}
+
+.no-res {
+    text-align: center;
+    color: #888;
+    font-size: 1.1rem;
+    margin: 40px 0;
+}
+
+.back-link {
+    margin-top: 32px;
+    text-align: center;
+}
+
+.back-link a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.08rem;
+}
+
+.back-link a:hover {
+    text-decoration: underline;
+}

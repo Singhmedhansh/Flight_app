@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      .time {
+        font-weight: bold;
+        color: #2d3e50;
+        letter-spacing: 1px;
+      }
+      ul.route-list {
+        margin: 0 0 0 10px;
+        padding: 0 0 0 15px;
+      }
+    </style>
+</head>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flashes">
+          {% for category, message in messages %}
+            <li class="alert {% if category %}alert-{{ category }}{% endif %}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>✈️ Flight Booker</h2>
+        </div>
+        <ul>
+            <li><a href="/dashboard">Dashboard</a></li>
+            <li><a href="/reservations">My Reservations</a></li>
+            <li><a href="/logout" class="logout">Log Out</a></li>
+        </ul>
+    </div>
+
+    <!-- Account icon at top right -->
+    <div class="account-icon">
+        <a href="/profile" title="Account">
+            <i class="fa-solid fa-user-circle"></i>
+        </a>
+    </div>
+
+    <div class="main-content">
+        <div class="welcome">
+            <h1>Welcome, {{ username }}!</h1>
+            <p>What would you like to do today?</p>
+        </div>
+        <div class="dashboard-cards">
+            <div class="card">
+                <h3>Search Flights</h3>
+                <p>Find and book flights easily.</p>
+                <form method="post" class="dashboard-search-form">
+                    <label for="origin">Origin:</label>
+                    <input type="text" id="origin" name="origin" placeholder="Enter origin (e.g. DEL)" required>
+                    <label for="destination">Destination:</label>
+                    <input type="text" id="destination" name="destination" placeholder="Enter destination (e.g. BOM)" required>
+                    <label for="date">Date:</label>
+                    <input type="date" id="date" name="date" required>
+                    <button type="submit" class="card-btn">Search</button>
+                </form>
+            </div>
+            <div class="card">
+                <h3>My Reservations</h3>
+                <p>View and manage your bookings.</p>
+                <a href="/reservations" class="card-btn">View</a>
+            </div>
+            <div class="card">
+                <h3>Account</h3>
+                <p>Update your profile and settings.</p>
+                <a href="/profile" class="card-btn">Profile</a>
+            </div>
+        </div>
+
+        {% if search_results %}
+        <div class="search-results">
+            <h2>Search Results</h2>
+            {% for flight in search_results %}
+              {% set segments = flight.itineraries[0].segments %}
+              <div class="result-card">
+                <p>
+                  <strong>Airline:</strong>
+                  {% set code = segments[0].carrierCode %}
+                  {{ AIRLINE_NAMES.get(code, code) }} ({{ code }})<br>
+                  <strong>From:</strong> {{ segments[0].departure.iataCode }}<br>
+                  <strong>To:</strong> {{ segments[-1].arrival.iataCode }}<br>
+                  <strong>Departure:</strong>
+                  {{ segments[0].departure.at.split('T')[0] }} &nbsp;
+                  <span class="time">{{ segments[0].departure.at.split('T')[1] }}</span><br>
+                  <strong>Arrival:</strong>
+                  {{ segments[-1].arrival.at.split('T')[0] }} &nbsp;
+                  <span class="time">{{ segments[-1].arrival.at.split('T')[1] }}</span><br>
+                  <strong>Stops:</strong>
+                  {% if segments|length == 1 %}
+                    Non-stop
+                  {% else %}
+                    {{ segments|length - 1 }} stop{{ 's' if segments|length > 2 else '' }}
+                  {% endif %}<br>
+                  <strong>Route:</strong>
+                  <ul class="route-list">
+                    {% for seg in segments %}
+                      <li>
+                        {{ AIRLINE_NAMES.get(seg.carrierCode, seg.carrierCode) }} ({{ seg.carrierCode }}) :
+                        {{ seg.departure.iataCode }} ({{ seg.departure.at.split('T')[0] }} {{ seg.departure.at.split('T')[1] }})
+                        →
+                        {{ seg.arrival.iataCode }} ({{ seg.arrival.at.split('T')[0] }} {{ seg.arrival.at.split('T')[1] }})
+                      </li>
+                    {% endfor %}
+                  </ul>
+                  <strong>Price:</strong> {{ flight.price.total }} {{ flight.price.currency }}
+                </p>
+                <form method="post" action="{{ url_for('book', flight_id=loop.index0) }}">
+                  <input type="hidden" name="flight_data" value="{{ flight | tojson }}">
+                  <button type="submit" class="card-btn">Book</button>
+                </form>
+              </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
