@@ -77,49 +77,53 @@
             </div>
         </div>
 
-        {% if search_results %}
+        {% if search_results is not none %}
         <div class="search-results">
             <h2>Search Results</h2>
-            {% for flight in search_results %}
-              {% set segments = flight.itineraries[0].segments %}
-              <div class="result-card">
-                <p>
-                  <strong>Airline:</strong>
-                  {% set code = segments[0].carrierCode %}
-                  {{ AIRLINE_NAMES.get(code, code) }} ({{ code }})<br>
-                  <strong>From:</strong> {{ segments[0].departure.iataCode }}<br>
-                  <strong>To:</strong> {{ segments[-1].arrival.iataCode }}<br>
-                  <strong>Departure:</strong>
-                  {{ segments[0].departure.at.split('T')[0] }} &nbsp;
-                  <span class="time">{{ segments[0].departure.at.split('T')[1] }}</span><br>
-                  <strong>Arrival:</strong>
-                  {{ segments[-1].arrival.at.split('T')[0] }} &nbsp;
-                  <span class="time">{{ segments[-1].arrival.at.split('T')[1] }}</span><br>
-                  <strong>Stops:</strong>
-                  {% if segments|length == 1 %}
-                    Non-stop
-                  {% else %}
-                    {{ segments|length - 1 }} stop{{ 's' if segments|length > 2 else '' }}
-                  {% endif %}<br>
-                  <strong>Route:</strong>
-                  <ul class="route-list">
-                    {% for seg in segments %}
-                      <li>
-                        {{ AIRLINE_NAMES.get(seg.carrierCode, seg.carrierCode) }} ({{ seg.carrierCode }}) :
-                        {{ seg.departure.iataCode }} ({{ seg.departure.at.split('T')[0] }} {{ seg.departure.at.split('T')[1] }})
-                        →
-                        {{ seg.arrival.iataCode }} ({{ seg.arrival.at.split('T')[0] }} {{ seg.arrival.at.split('T')[1] }})
-                      </li>
-                    {% endfor %}
-                  </ul>
-                  <strong>Price:</strong> {{ flight.price.total }} {{ flight.price.currency }}
-                </p>
-                <form method="post" action="{{ url_for('book', flight_id=loop.index0) }}">
-                  <input type="hidden" name="flight_data" value="{{ flight | tojson }}">
-                  <button type="submit" class="card-btn">Book</button>
-                </form>
-              </div>
-            {% endfor %}
+            {% if search_results|length == 0 %}
+                <p>No flights found for the selected route and date.</p>
+            {% else %}
+                {% for flight in search_results %}
+                  {% set segments = flight.itineraries[0].segments %}
+                  <div class="result-card">
+                    <p>
+                      <strong>Airline:</strong>
+                      {% set code = segments[0].carrierCode %}
+                      {{ AIRLINE_NAMES.get(code, code) }} ({{ code }})<br>
+                      <strong>From:</strong> {{ segments[0].departure.city }} ({{ segments[0].departure.iataCode }})<br>
+                      <strong>To:</strong> {{ segments[-1].arrival.city }} ({{ segments[-1].arrival.iataCode }})<br>
+                      <strong>Departure:</strong>
+                      {{ segments[0].departure.at.split('T')[0] }} &nbsp;
+                      <span class="time">{{ segments[0].departure.at.split('T')[1] }}</span><br>
+                      <strong>Arrival:</strong>
+                      {{ segments[-1].arrival.at.split('T')[0] }} &nbsp;
+                      <span class="time">{{ segments[-1].arrival.at.split('T')[1] }}</span><br>
+                      <strong>Stops:</strong>
+                      {% if segments|length == 1 %}
+                        Non-stop
+                      {% else %}
+                        {{ segments|length - 1 }} stop{{ 's' if segments|length > 2 else '' }}
+                      {% endif %}<br>
+                      <strong>Route:</strong>
+                      <ul class="route-list">
+                        {% for seg in segments %}
+                          <li>
+                            {{ AIRLINE_NAMES.get(seg.carrierCode, seg.carrierCode) }} ({{ seg.carrierCode }}) :
+                            {{ seg.departure.city }} ({{ seg.departure.iataCode }}) ({{ seg.departure.at.split('T')[0] }} {{ seg.departure.at.split('T')[1] }})
+                            →
+                            {{ seg.arrival.city }} ({{ seg.arrival.iataCode }}) ({{ seg.arrival.at.split('T')[0] }} {{ seg.arrival.at.split('T')[1] }})
+                          </li>
+                        {% endfor %}
+                      </ul>
+                      <strong>Price:</strong> {{ flight.price.total }} {{ flight.price.currency }}
+                    </p>
+                    <form method="post" action="{{ url_for('book', flight_id=loop.index0) }}">
+                      <input type="hidden" name="flight_data" value='{{ flight | tojson | safe }}'>
+                      <button type="submit" class="card-btn">Book</button>
+                    </form>
+                  </div>
+                {% endfor %}
+            {% endif %}
         </div>
         {% endif %}
     </div>

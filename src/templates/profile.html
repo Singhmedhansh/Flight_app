@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <style>
+        .profile-container {
+            max-width: 420px;
+            margin: 60px auto;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 4px 24px rgba(44,62,80,0.08);
+            padding: 40px 32px 32px 32px;
+        }
+        .profile-container h2 {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .profile-form label {
+            font-weight: 500;
+            margin-bottom: 6px;
+            display: block;
+        }
+        .profile-form input[type="text"],
+        .profile-form input[type="email"],
+        .profile-form input[type="password"] {
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 18px;
+            border: 1px solid #dbeafe;
+            border-radius: 7px;
+            font-size: 1rem;
+        }
+        .profile-form button {
+            width: 100%;
+            background: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 7px;
+            padding: 12px 0;
+            font-size: 1.08rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        .profile-form .reset-link {
+            display: block;
+            text-align: right;
+            margin-bottom: 10px;
+            color: #3498db;
+            text-decoration: none;
+            font-size: 0.98rem;
+        }
+        .profile-form .reset-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <h2>My Profile</h2>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class="flashes">
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+        <form class="profile-form" method="post" action="/profile">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" value="{{ user.username }}" required>
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="{{ user.email }}" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter new password (leave blank to keep current)">
+
+            <a href="/forgot_password" class="reset-link">Forgot password?</a>
+
+            <button type="submit">Update Profile</button>
+        </form>
+    </div>
+</body>
+</html>

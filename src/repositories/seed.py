@@ -16,88 +16,55 @@ connection = mysql.connector.connect(
 mycursor = connection.cursor()
 
 
-# Step 1: Create a DataFrame with the data
-df = pd.read_csv('C:/Users/singh/Downloads/Flight_res/dataset/airlines.csv')  
 
-# Step 2: Create a SQLAlchemy engine to connect to the MySQL database
-engine = create_engine("mysql+mysqlconnector://educative:BMWfav3$@localhost/flight")
-
-# Step 3: Convert the Pandas DataFrame to a format for MySQL table insertion
-df.to_sql('airline', con=engine, if_exists='append', index=False)
-
+## Clear tables before seeding to avoid duplicates
+mycursor.execute("DELETE FROM flight;")
+mycursor.execute("DELETE FROM airport;")
+mycursor.execute("DELETE FROM airline;")
 connection.commit()
 
-#print(mycursor.rowcount, "record inserted.")
-#mycursor.execute("Select * from Airline")
+# Step 1: Insert airlines
+airlines_df = pd.read_csv('../dataset/airlines.csv')
+for _, row in airlines_df.iterrows():
+    mycursor.execute("""
+        INSERT IGNORE INTO airline (code, name, country)
+        VALUES (%s, %s, %s)
+    """, (row['code'], row['name'], row['country']))
+connection.commit()
 
 
 
 ################################################################################################################
 
-# Load the dataframe from the CSV file
-df = pd.read_csv('C:/Users/singh/Downloads/Flight_res/dataset/airports.csv')
 
-mycursor = connection.cursor()
-
-# Function to insert into the Address table and get address_id
-def insert_address(city, state, country):
+# Step 2: Insert airports (no address table, just code, name, city, country)
+airports_df = pd.read_csv('../dataset/airports.csv')
+for _, row in airports_df.iterrows():
     mycursor.execute("""
-        INSERT INTO address (city, state, country)
-        VALUES (%s, %s, %s)
-    """, (city, state, country))
-    
-    connection.commit()  # Save the changes
-    return mycursor.lastrowid  # Get the last inserted address_id
-
-# Iterate over each row in the dataframe
-for index, row in df.iterrows():
-    # Extract city, state, country
-    city = row['city']
-    state = row['state']
-    country = row['country']
-
-    # Insert into Address and get address_id
-    address_id = insert_address(city, state, country)
-
-    # Insert into Airport using the code, name, and address_id
-    mycursor.execute("""
-        INSERT INTO airport (code, name, address_id)
-        VALUES (%s, %s, %s)
-    """, (row['code'], row['name'], address_id))
-    
-    connection.commit()  # Save the changes
+        INSERT IGNORE INTO airport (code, name, city, country)
+        VALUES (%s, %s, %s, %s)
+    """, (row['code'], row['name'], row['city'], row['country']))
+connection.commit()
 
 
 
 
 ################################################################################################################
 
-# Load the dataframe from the CSV file
-flights_df = pd.read_csv('C:/Users/singh/Downloads/Flight_res/dataset/flights.csv')
-print(flights_df.columns)
-# Create a cursor object
-mycursor = connection.cursor()
 
-# Prepare an SQL query to insert data into the Flight table
-# flight_no
+# Step 3: Insert flights
+flights_df = pd.read_csv('../dataset/flights.csv')
 insert_flight_query = """
-    INSERT INTO flight (airline_code, distance_km, dep_time, arri_time, dep_port, arri_port, booked_seats)
-    VALUES (%s, %s, %s, %s, %s, %s, 0)
+    INSERT IGNORE INTO flight (airline_code, origin, destination, dep_time, arri_time, seats_available)
+    VALUES (%s, %s, %s, %s, %s, %s)
 """
-
-# Select only the relevant columns
-relevant_columns = ['airline_code', 'distance_km', 'dep_time', 'arri_time', 'dep_port', 'arri_port']
-# Convert the selected columns to tuples (rows of data)
+relevant_columns = ['airline_code', 'origin', 'destination', 'dep_time', 'arri_time', 'seats_available']
 flight_data = [tuple(row) for row in flights_df[relevant_columns].values]
-
-# Execute the insert query for each row of flight data
-batch_size = 1000  # Adjust the batch size as needed
-
+batch_size = 1000
 for i in range(0, len(flight_data), batch_size):
     batch = flight_data[i:i+batch_size]
     mycursor.executemany(insert_flight_query, batch)
-    connection.commit()  # Commit after each batch to save the changes
-
+    connection.commit()
 print(f"{len(flight_data)} flights inserted into the database.")
 
 
@@ -106,12 +73,12 @@ print(f"{len(flight_data)} flights inserted into the database.")
 # Create a cursor object
 mycursor = connection.cursor()
 
-# Insert roles
-mycursor.execute("INSERT INTO Role(name) VALUES ('admin');")
-mycursor.execute("INSERT INTO Role(name) VALUES ('user');")
+# Insert roles (ignore duplicates)
+mycursor.execute("INSERT IGNORE INTO Role(name) VALUES ('admin');")
+mycursor.execute("INSERT IGNORE INTO Role(name) VALUES ('user');")
 
-# Insert admin account
-mycursor.execute("INSERT INTO account(username, password, status) VALUES ('admin_user', '12345', 'active');")
+# Insert admin account (ignore duplicate)
+mycursor.execute("INSERT IGNORE INTO account(username, password, status) VALUES ('admin_user', '12345', 'active');")
 
 # Fetch the account_id of the newly inserted admin account
 mycursor.execute("SELECT account_id FROM Account WHERE username = 'admin_user';")
@@ -121,8 +88,8 @@ admin_account_id = mycursor.fetchone()[0]
 mycursor.execute("SELECT role_id FROM Role WHERE name = 'admin';")
 admin_role_id = mycursor.fetchone()[0]
 
-# Insert into Account_Role (assign admin role to admin_user)
-mycursor.execute("INSERT INTO account_Role(account_id, role_id) VALUES (%s, %s);", (admin_account_id, admin_role_id))
+# Insert into Account_Role (assign admin role to admin_user, ignore duplicates)
+mycursor.execute("INSERT IGNORE INTO account_Role(account_id, role_id) VALUES (%s, %s);", (admin_account_id, admin_role_id))
 
 # Commit the changes
 connection.commit()

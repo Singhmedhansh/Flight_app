@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <title>Confirm Reservation</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+        <style>
+            .preview-container {
+                max-width: 600px;
+                margin: 60px auto 0 auto;
+                background: #fff;
+                border-radius: 14px;
+                box-shadow: 0 4px 24px rgba(44,62,80,0.08);
+                padding: 40px 32px 32px 32px;
+            }
+            .preview-title {
+                text-align: center;
+                margin-bottom: 32px;
+                font-size: 2rem;
+                font-weight: 700;
+            }
+            .preview-details {
+                background: #f8fafc;
+                border-radius: 10px;
+                box-shadow: 0 2px 12px rgba(44,62,80,0.06);
+                padding: 24px 20px;
+                margin-bottom: 24px;
+                font-size: 1.08rem;
+                color: #232946;
+            }
+            .preview-details strong {
+                color: #232946;
+            }
+            .preview-btn {
+                display: block;
+                width: 100%;
+                background: #232946;
+                color: #fff;
+                padding: 12px 0;
+                border-radius: 6px;
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 1.1rem;
+                margin-top: 18px;
+                border: none;
+                cursor: pointer;
+                transition: background 0.18s;
+            }
+            .preview-btn:hover {
+                background: #394867;
+            }
+            .back-link {
+                margin-top: 32px;
+                text-align: center;
+            }
+            .back-link a {
+                color: #3498db;
+                text-decoration: none;
+                font-weight: 500;
+                font-size: 1.08rem;
+            }
+            .back-link a:hover {
+                text-decoration: underline;
+            }
+        </style>
+</head>
+<body>
+    <div class="preview-container">
+        <div class="preview-title">Confirm Your Booking</div>
+        <div class="preview-details">
+            <div>
+                <strong>Airline:</strong> {{ airline_name }} ({{ flight['carrierCode'] }})<br>
+                <strong>From:</strong> {{ flight['departure']['city'] }} ({{ flight['departure']['iataCode'] }}) <strong>To:</strong> {{ flight['arrival']['city'] }} ({{ flight['arrival']['iataCode'] }})
+            </div>
+            <div style="margin-top: 10px;">
+                <strong>Departure:</strong> {{ flight['departure']['at'] }}<br>
+                <strong>Arrival:</strong> {{ flight['arrival']['at'] }}
+            </div>
+        </div>
+        <form method="post" action="{{ url_for('confirm_booking') }}">
+            <input type="hidden" name="flight_data" value='{{ flight_data | tojson | safe }}'>
+            <button type="submit" class="preview-btn">Confirm Booking</button>
+        </form>
+        <div class="back-link">
+            <a href="/dashboard">&larr; Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

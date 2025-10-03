@@ -1,8 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My Reservations</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='reservations.css') }}">
+        <title>My Reservations</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+        <style>
+            .reservations-container {
+                max-width: 900px;
+                margin: 40px auto;
+                background: #fff;
+                border-radius: 14px;
+                box-shadow: 0 4px 24px rgba(44,62,80,0.08);
+                padding: 40px 32px 32px 32px;
+            }
+            .reservations-list {
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+            }
+            .reservation-card {
+                background: #f8fafc;
+                border-radius: 10px;
+                box-shadow: 0 2px 12px rgba(44,62,80,0.06);
+                padding: 24px 20px;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                border-left: 5px solid #3498db;
+                transition: box-shadow 0.2s;
+            }
+            .reservation-card:hover {
+                box-shadow: 0 6px 24px rgba(44,62,80,0.13);
+            }
+            .res-details {
+                display: flex;
+                gap: 40px;
+                flex-wrap: wrap;
+                font-size: 1rem;
+                color: #444;
+            }
+            .no-res {
+                text-align: center;
+                color: #888;
+                font-size: 1.1rem;
+                margin: 40px 0;
+            }
+            .back-link {
+                margin-top: 32px;
+                text-align: center;
+            }
+            .back-link a {
+                color: #3498db;
+                text-decoration: none;
+                font-weight: 500;
+                font-size: 1.08rem;
+            }
+            .back-link a:hover {
+                text-decoration: underline;
+            }
+        </style>
 </head>
 <body>
   {% with messages = get_flashed_messages(with_categories=true) %}
@@ -20,28 +75,18 @@
             <div class="reservations-list">
                 {% for r in reservations %}
                 <div class="reservation-card">
-                    <div class="res-header">
-                        <span class="res-number">#{{ r.reservation_number }}</span>
-                        <span class="res-status">{{ r.status|capitalize }}</span>
-                    </div>
                     <div class="res-details">
                         <div>
-                            <strong>Flight:</strong> {{ r.flight_no }}<br>
-                            <strong>From:</strong> {{ r.origin }} <strong>To:</strong> {{ r.destination }}
+                            <strong>From:</strong> {{ r.origin_city }} ({{ r.origin }}) <strong>To:</strong> {{ r.destination_city }} ({{ r.destination }})
                         </div>
                         <div>
                             <strong>Departure:</strong> {{ r.dep_time }}<br>
                             <strong>Arrival:</strong> {{ r.arri_time }}
                         </div>
-                        <div>
-                            <strong>Seats:</strong> {{ r.seats }}
-                        </div>
-                    </div>
-                    <div class="res-actions">
-                        <a href="/reservation/{{ r.reservation_number }}" class="view-btn">View</a>
-                        {% if r.status == 'active' %}
-                        <a href="/reservation/cancel/{{ r.reservation_number }}" class="cancel-btn">Cancel</a>
-                        {% endif %}
+                        <form method="post" action="/cancel_reservation" class="cancel-form" style="margin-top:10px;">
+                            <input type="hidden" name="reservation_id" value="{{ r.id }}">
+                            <button type="button" class="card-btn cancel-btn" style="background:#e74c3c; border:none; width:170px; margin-top:8px;">Cancel Booking</button>
+                        </form>
                     </div>
                 </div>
                 {% endfor %}
@@ -53,5 +98,71 @@
             <a href="/dashboard">&larr; Back to Dashboard</a>
         </div>
     </div>
+
+    <!-- Single Modal for all reservations -->
+    <div id="cancelModal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(44,62,80,0.18);">
+        <div style="background:#fff; max-width:350px; margin:120px auto 0 auto; border-radius:12px; box-shadow:0 4px 24px rgba(44,62,80,0.13); padding:32px 28px; text-align:center;">
+            <div id="modalText" style="font-size:1.15rem; color:#232946; margin-bottom:22px;">Are you sure you want to cancel this booking?</div>
+            <div id="modalActions" style="display:flex; gap:18px; justify-content:center;">
+                <button id="modalYes" class="card-btn" style="background:#e74c3c; border:none;">Yes, Cancel</button>
+                <button id="modalNo" class="card-btn" style="background:#232946; border:none;">No</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        let formToSubmit = null;
+        let cardToRemove = null;
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.cancel-btn').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    formToSubmit = btn.closest('form');
+                    cardToRemove = btn.closest('.reservation-card');
+                    document.getElementById('cancelModal').style.display = 'block';
+                    document.getElementById('modalText').textContent = 'Are you sure you want to cancel this booking?';
+                    document.getElementById('modalActions').style.display = 'flex';
+                });
+            });
+            document.getElementById('modalYes').onclick = function() {
+                // AJAX request to cancel without page reload
+                if (formToSubmit) {
+                    const formData = new FormData(formToSubmit);
+                    fetch('/cancel_reservation', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('modalText').textContent = 'Booking has been successfully cancelled.';
+                            document.getElementById('modalActions').style.display = 'none';
+                            if (cardToRemove) cardToRemove.remove();
+                            setTimeout(() => {
+                                document.getElementById('cancelModal').style.display = 'none';
+                            }, 1200);
+                        } else {
+                            document.getElementById('modalText').textContent = data.message || 'Failed to cancel booking.';
+                            document.getElementById('modalActions').style.display = 'none';
+                            setTimeout(() => {
+                                document.getElementById('cancelModal').style.display = 'none';
+                            }, 1800);
+                        }
+                    })
+                    .catch(() => {
+                        document.getElementById('modalText').textContent = 'Error contacting server.';
+                        document.getElementById('modalActions').style.display = 'none';
+                        setTimeout(() => {
+                            document.getElementById('cancelModal').style.display = 'none';
+                        }, 1800);
+                    });
+                }
+            };
+            document.getElementById('modalNo').onclick = function() {
+                document.getElementById('cancelModal').style.display = 'none';
+                formToSubmit = null;
+                cardToRemove = null;
+            };
+        });
+    </script>
 </body>
 </html>
