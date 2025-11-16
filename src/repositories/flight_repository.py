@@ -1,8 +1,27 @@
 # To handle operations related to the Flight table.
-import mysql.connector
+try:
+    import mysql.connector
+    MYSQL_AVAILABLE = True
+except Exception:
+    mysql = None
+    MYSQL_AVAILABLE = False
+import sqlite3
 from datetime import datetime, timedelta
 from collections import deque
-#from config.database_config import get_db_connection  
+
+def get_db_connection():
+    if MYSQL_AVAILABLE:
+        return mysql.connector.connect(
+          host="localhost",
+          user="educative",
+          password="BMWfav3$",
+          database="flight"
+        )
+    else:
+        # Provide a sqlite in-memory fallback for UI testing (minimal)
+        conn = sqlite3.connect(':memory:')
+        conn.row_factory = sqlite3.Row
+        return conn
 
 def get_db_connection():
     connection = mysql.connector.connect(

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirm Booking</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      .reservation-card {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 16px;
+        background: #f9f9f9;
+      }
+      .time {
+        font-weight: bold;
+        color: #2d3e50;
+        letter-spacing: 1px;
+      }
+    </style>
+</head>
+<body>
+  {% include '_header.html' %}
+  <div class="main-content">
+        <h2>Confirm Your Booking</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <ul class="flashes">
+              {% for category, message in messages %}
+                <li class="alert {% if category %}alert-{{ category }}{% endif %}">{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+        {% set segments = flight.itineraries[0].segments %}
+        <div class="reservation-card">
+            <strong>Airline:</strong>
+            {% set code = segments[0].carrierCode %}
+            {{ AIRLINE_NAMES.get(code, code) }} ({{ code }})<br>
+            <strong>From:</strong> {{ segments[0].departure.iataCode }}<br>
+            <strong>To:</strong> {{ segments[-1].arrival.iataCode }}<br>
+            <strong>Departure:</strong>
+            {{ segments[0].departure.at.split('T')[0] }} <span class="time">{{ segments[0].departure.at.split('T')[1] }}</span><br>
+            <strong>Arrival:</strong>
+            {{ segments[-1].arrival.at.split('T')[0] }} <span class="time">{{ segments[-1].arrival.at.split('T')[1] }}</span><br>
+            <strong>Stops:</strong>
+            {% if segments|length == 1 %}
+                Non-stop
+            {% else %}
+                {{ segments|length - 1 }} stop{{ 's' if segments|length > 2 else '' }}
+            {% endif %}<br>
+            <strong>Price:</strong> {{ flight.price.total }} {{ flight.price.currency }}
+        </div>
+        <form method="post" action="{{ url_for('confirm_booking', flight_id=0) }}">
+            <input type="hidden" name="flight_data" value='{{ flight | tojson | safe }}'>
+            <button type="submit" class="card-btn">Confirm Booking</button>
+            <a href="{{ url_for('dashboard') }}" class="card-btn">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>

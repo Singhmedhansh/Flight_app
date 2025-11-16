@@ -2,7 +2,8 @@
 <html>
 <head>
     <title>Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
@@ -18,7 +19,8 @@
     </style>
 </head>
 <body>
-    {% with messages = get_flashed_messages(with_categories=true) %}
+  {% include '_header.html' %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         <ul class="flashes">
           {% for category, message in messages %}
@@ -47,15 +49,27 @@
     </div>
 
     <div class="main-content">
-        <div class="welcome">
-            <h1>Welcome, {{ username }}!</h1>
-            <p>What would you like to do today?</p>
+        <div class="hero hero-visual">
+            <div class="hero-bg" aria-hidden="true">
+              <!-- Decorative hero image removed to match theme and sidebar color.
+                   The visual accent is provided by CSS in dashboard.css (::after) so no
+                   large image is loaded here. -->
+            </div>
+            <div class="hero-left">
+                <h1>Welcome, {{ username }}!</h1>
+                <p class="lead">Find great fares and manage your bookings — all in one place.</p>
+                <div class="hero-actions">
+                  <a href="{{ url_for('reservations') }}" class="card-btn primary">My Reservations</a>
+                  <a href="#search-section" class="card-btn secondary">Explore</a>
+                </div>
+                
+            </div>
         </div>
         <div class="dashboard-cards">
             <div class="card">
                 <h3>Search Flights</h3>
                 <p>Find and book flights easily.</p>
-                <form method="post" class="dashboard-search-form">
+                <form id="search-section" method="post" class="dashboard-search-form">
                     <label for="origin">Origin:</label>
                     <input type="text" id="origin" name="origin" placeholder="Enter origin (e.g. DEL)" required>
                     <label for="destination">Destination:</label>
@@ -66,9 +80,40 @@
                 </form>
             </div>
             <div class="card">
-                <h3>My Reservations</h3>
-                <p>View and manage your bookings.</p>
-                <a href="/reservations" class="card-btn">View</a>
+        <h3>My Reservations</h3>
+        <p>View and manage your bookings.</p>
+        {% if recent_reservations %}
+          <div class="mini-reservations">
+            {% for r in recent_reservations %}
+              <div class="mini-reservation">
+                <div class="mini-res-left">
+                  <strong>{{ AIRLINE_NAMES.get(r.airline_code, r.airline_code) }} ({{ r.airline_code }})</strong>
+                  <div class="mini-route"><small>{{ r.dep_port }} → {{ r.arri_port }}</small></div>
+                  <div class="mini-times">
+                    {% if r.dep_time %}
+                      <div>Dep: <span class="time">{{ r.dep_time.strftime('%Y-%m-%d %H:%M') }}</span></div>
+                    {% endif %}
+                    {% if r.arri_time %}
+                      <div>Arr: <span class="time">{{ r.arri_time.strftime('%Y-%m-%d %H:%M') }}</span></div>
+                    {% endif %}
+                  </div>
+                  <div class="mini-booked">Booked: {% if r.creation_date %}{{ r.creation_date.strftime('%Y-%m-%d %H:%M') }}{% else %}N/A{% endif %}</div>
+                </div>
+                <div class="mini-res-right">
+                  {% if r.id %}
+                    <form method="post" action="{{ url_for('cancel_reservation') }}" onsubmit="return confirm('Cancel this reservation?');">
+                      <input type="hidden" name="reservation_id" value="{{ r.id }}">
+                      <button type="submit" class="card-btn danger small">Cancel</button>
+                    </form>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          <a href="/reservations" class="card-btn">View all</a>
+        {% else %}
+          <a href="/reservations" class="card-btn">View</a>
+        {% endif %}
             </div>
             <div class="card">
                 <h3>Account</h3>
@@ -114,8 +159,8 @@
                   </ul>
                   <strong>Price:</strong> {{ flight.price.total }} {{ flight.price.currency }}
                 </p>
-                <form method="post" action="{{ url_for('book', flight_id=loop.index0) }}">
-                  <input type="hidden" name="flight_data" value="{{ flight | tojson }}">
+                <form method="get" action="{{ url_for('book_preview', flight_id=loop.index0) }}">
+                  <input type="hidden" name="flight_data" value='{{ flight | tojson | safe }}'>
                   <button type="submit" class="card-btn">Book</button>
                 </form>
               </div>
@@ -123,5 +168,7 @@
         </div>
         {% endif %}
     </div>
-</body>
+    </div>
+      <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    </body>
 </html>

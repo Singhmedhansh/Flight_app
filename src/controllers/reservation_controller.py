@@ -3,7 +3,12 @@ import sys
 import heapq
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from datetime import datetime
-import mysql.connector
+try:
+    import mysql.connector
+    MYSQL_AVAILABLE = True
+except Exception:
+    mysql = None
+    MYSQL_AVAILABLE = False
 
 from models.flight import Flight
 from models.flight_reservation import FlightReservation
@@ -14,14 +19,26 @@ __all__ = ['ReservationController']
 
 class ReservationController:
     def __init__(self):
-        self.connection = mysql.connector.connect(
-            host="localhost",
-            user="educative",
-            password="BMWfav3$",
-            database="flight"
-        )
-        self.flight_repo = FlightRepository()
-        self.reservation_repo = ReservationRepository()
+        if MYSQL_AVAILABLE:
+            try:
+                self.connection = mysql.connector.connect(
+                    host="localhost",
+                    user="educative",
+                    password="BMWfav3$",
+                    database="flight"
+                )
+            except Exception:
+                self.connection = None
+        else:
+            self.connection = None
+
+        # Only initialize repositories when a DB connection is available
+        if self.connection:
+            self.flight_repo = FlightRepository()
+            self.reservation_repo = ReservationRepository()
+        else:
+            self.flight_repo = None
+            self.reservation_repo = None
 
     def create_flight_object(self, flight_data):
         reordered_flight_data = flight_data[1:] + (flight_data[0],)

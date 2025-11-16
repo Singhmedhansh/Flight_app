@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1600" height="600" viewBox="0 0 1600 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#0f1724" stop-opacity="1" />
+      <stop offset="45%" stop-color="#1e3a8a" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#0ea5a4" stop-opacity="0.92" />
+    </linearGradient>
+    <linearGradient id="g2" x1="0" x2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.06" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.02" />
+    </linearGradient>
+    <filter id="grain" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence baseFrequency="0.8" numOctaves="2" stitchTiles="stitch" seed="4" />
+      <feColorMatrix type="saturate" values="0" />
+      <feComponentTransfer>
+        <feFuncA type="table" tableValues="0 0.06"/>
+      </feComponentTransfer>
+      <feBlend mode="overlay"/>
+    </filter>
+  </defs>
+
+  <!-- gradient background -->
+  <rect width="100%" height="100%" fill="url(#g1)" />
+
+  <!-- soft diagonal light -->
+  <rect width="120%" height="120%" x="-10%" y="-10%" fill="url(#g2)" transform="rotate(-18 800 300)" opacity="0.6" />
+
+  <!-- subtle wave shapes to resemble sky layers -->
+  <g opacity="0.12" fill="#fff">
+    <path d="M0,420 C220,360 420,340 720,380 C1020,420 1320,380 1600,360 L1600,600 L0,600 Z"/>
+    <path d="M0,360 C280,300 520,260 860,300 C1200,340 1400,300 1600,280 L1600,600 L0,600 Z"/>
+  </g>
+
+  <!-- stylized airplane silhouette -->
+  <g transform="translate(1200,110) scale(1.05)" fill="#ffffff" opacity="0.88">
+    <path d="M0 40 L72 24 L120 20 L128 16 L132 8 L122 6 L72 12 L18 0 L10 6 L18 12 L0 40 Z" transform="translate(-140 -24) rotate(8)" />
+    <path d="M0 0 L360 0 L360 6 L320 12 L280 8 L240 12 L220 20 L200 20 L160 32 L140 40 L120 44 L80 56 L0 80 Z" transform="translate(-360 40) rotate(-6) scale(0.9)" />
+  </g>
+
+  <!-- gentle grain/texture overlay -->
+  <rect width="100%" height="100%" filter="url(#grain)" opacity="0.08" />
+
+  <!-- optional focal vignette -->
+  <radialGradient id="vign" cx="40%" cy="30%">
+    <stop offset="0%" stop-color="#000" stop-opacity="0" />
+    <stop offset="100%" stop-color="#000" stop-opacity="0.25" />
+  </radialGradient>
+  <rect width="100%" height="100%" fill="url(#vign)" opacity="0.6" />
+
+</svg>

@@ -1,0 +1,54 @@
+<div class="topbar">
+  <div class="brand">✈️ Flight Booker</div>
+  <div class="top-actions">
+    {% if session.username %}
+      <div class="user-area">
+        <button id="theme-toggle" class="icon-btn" title="Toggle theme">🌙</button>
+        <!-- hidden header upload form for quick PFP selection -->
+        <form id="header-upload-form" method="post" action="{{ url_for('upload_profile_photo') }}" enctype="multipart/form-data" style="display:none;">
+          <input type="file" id="header_profile_photo" name="profile_photo" accept="image/*">
+        </form>
+        <div class="avatar-wrap">
+          <img id="profile-img" src="{{ profile_url or url_for('static', filename='default_profile.svg') }}" alt="Profile" class="avatar" />
+          <button id="user-menu-btn" class="avatar-toggle" aria-expanded="false" aria-haspopup="true">
+            <!-- SVG chevron for sharp rotation/animation -->
+            <svg class="chev-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <div id="user-dropdown" class="user-dropdown" aria-hidden="true">
+            <div class="dropdown-header">{{ session.username }}</div>
+            <ul class="dropdown-list">
+              <li><button id="change-photo" class="dropdown-item">Change Photo</button></li>
+              <li><button id="dropdown-theme-toggle" class="dropdown-item">Toggle Theme</button></li>
+              <li><a href="{{ url_for('logout') }}" class="dropdown-item">Log out</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <a href="{{ url_for('login') }}">Login</a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Profile modal -->
+<div id="profile-modal" class="modal" aria-hidden="true">
+  <div class="modal-content">
+    <button class="modal-close" id="modal-close">✕</button>
+    <h3>Update Profile Photo</h3>
+    <form id="upload-form" method="post" action="{{ url_for('upload_profile_photo') }}" enctype="multipart/form-data">
+      <input type="file" name="profile_photo" id="profile_photo" accept="image/*" required>
+      <div id="preview-container" style="margin:10px 0;display:none;">
+        <img id="preview-img" src="#" alt="Preview" style="max-width:120px;border-radius:8px;" />
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px;">
+        <button type="button" class="card-btn" id="modal-cancel">Cancel</button>
+        <button type="submit" class="card-btn">Upload</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+<script src="{{ url_for('static', filename='js/profile.js') }}"></script>

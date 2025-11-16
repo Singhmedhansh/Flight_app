@@ -2,56 +2,70 @@
 <html>
 <head>
     <title>My Reservations</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='reservations.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      .reservation-card {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 16px;
+        background: #f9f9f9;
+      }
+      .time {
+        font-weight: bold;
+        color: #2d3e50;
+        letter-spacing: 1px;
+      }
+    </style>
 </head>
 <body>
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      <ul class="flashes">
-        {% for category, message in messages %}
-          <li class="alert {% if category %}alert-{{ category }}{% endif %}">{{ message }}</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}
-    <div class="reservations-container">
-        <h1>My Reservations</h1>
-        {% if reservations %}
-            <div class="reservations-list">
-                {% for r in reservations %}
+  {% include '_header.html' %}
+  <div class="main-content">
+        <h2>My Reservations</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <ul class="flashes">
+              {% for category, message in messages %}
+                <li class="alert {% if category %}alert-{{ category }}{% endif %}">{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+    {% if reservations %}
+            {% for r in reservations %}
                 <div class="reservation-card">
-                    <div class="res-header">
-                        <span class="res-number">#{{ r.reservation_number }}</span>
-                        <span class="res-status">{{ r.status|capitalize }}</span>
-                    </div>
-                    <div class="res-details">
-                        <div>
-                            <strong>Flight:</strong> {{ r.flight_no }}<br>
-                            <strong>From:</strong> {{ r.origin }} <strong>To:</strong> {{ r.destination }}
-                        </div>
-                        <div>
-                            <strong>Departure:</strong> {{ r.dep_time }}<br>
-                            <strong>Arrival:</strong> {{ r.arri_time }}
-                        </div>
-                        <div>
-                            <strong>Seats:</strong> {{ r.seats }}
-                        </div>
-                    </div>
-                    <div class="res-actions">
-                        <a href="/reservation/{{ r.reservation_number }}" class="view-btn">View</a>
-                        {% if r.status == 'active' %}
-                        <a href="/reservation/cancel/{{ r.reservation_number }}" class="cancel-btn">Cancel</a>
-                        {% endif %}
-                    </div>
+                    <strong>Airline:</strong> {{ AIRLINE_NAMES.get(r.airline_code, r.airline_code) }} ({{ r.airline_code }})<br>
+                    <strong>From:</strong> {{ r.dep_port }}<br>
+                    <strong>To:</strong> {{ r.arri_port }}<br>
+                    <strong>Departure:</strong>
+                    {% if r.dep_time %}
+                        {{ r.dep_time.strftime('%Y-%m-%d') }} <span class="time">{{ r.dep_time.strftime('%H:%M') }}</span>
+                    {% else %}
+                        N/A
+                    {% endif %}<br>
+                    <strong>Arrival:</strong>
+                    {% if r.arri_time %}
+                        {{ r.arri_time.strftime('%Y-%m-%d') }} <span class="time">{{ r.arri_time.strftime('%H:%M') }}</span>
+                    {% else %}
+                        N/A
+                    {% endif %}<br>
+                    <strong>Booked On:</strong>
+                    {% if r.creation_date %}
+                        {{ r.creation_date.strftime('%Y-%m-%d %H:%M') }}
+                    {% else %}
+                        N/A
+                    {% endif %}
                 </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p class="no-res">You have no reservations yet.</p>
+            {% endfor %}
+    {% else %}
+      <p>You have no reservations yet.</p>
+      <div style="margin-top:12px;padding:12px;background:#f1f5f9;border-radius:6px;font-size:13px;color:#333;">
+        <strong>Debug</strong>: reservations length = {{ reservations|length }}
+        <pre style="white-space:pre-wrap;margin-top:8px;background:#fff;padding:8px;border-radius:4px;overflow:auto;">{{ reservations|tojson(indent=2) }}</pre>
+      </div>
         {% endif %}
-        <div class="back-link">
-            <a href="/dashboard">&larr; Back to Dashboard</a>
-        </div>
+        <a href="{{ url_for('dashboard') }}" class="card-btn">Back to Dashboard</a>
     </div>
 </body>
 </html>

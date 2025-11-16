@@ -5,7 +5,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    {% with messages = get_flashed_messages(with_categories=true) %}
+  {% include '_header.html' %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         <ul class="flashes">
           {% for category, message in messages %}

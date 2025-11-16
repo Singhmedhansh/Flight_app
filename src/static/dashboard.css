@@ -1,8 +1,15 @@
+/*
+  Clean, corrected dashboard CSS. This file contains layout and UX styles
+  for the dashboard, hero, cards, and the mini reservations widget. It
+  intentionally relies on theme variables defined in style.css (colors
+  and timing tokens).
+*/
+
 body {
     margin: 0;
     font-family: 'Segoe UI', Arial, sans-serif;
-    background: #f4f6fb;
-    color: #222;
+    background: var(--bg);
+    color: var(--text);
 }
 
 .sidebar {
@@ -11,8 +18,8 @@ body {
     top: 0;
     width: 230px;
     height: 100vh;
-    background: #232946;
-    color: #fff;
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text);
     display: flex;
     flex-direction: column;
     box-shadow: 2px 0 12px rgba(44,62,80,0.07);
@@ -21,42 +28,43 @@ body {
 .sidebar-header {
     padding: 32px 0 24px 0;
     text-align: center;
-    border-bottom: 1px solid #394867;
+    border-bottom: 1px solid rgba(44,62,80,0.06);
 }
 
 .sidebar-header h2 {
     margin: 0;
-    font-size: 1.5rem;
-    letter-spacing: 1px;
+    font-size: 1.6rem;
+    letter-spacing: 0.4px;
+    color: var(--sidebar-text);
+    font-weight: 800;
+    font-family: var(--ui-font);
+    display:flex; align-items:center; gap:10px; justify-content:center;
 }
 
 .sidebar ul {
     list-style: none;
-    padding: 0;
+    padding: 0 12px 12px 12px;
     margin: 0;
     flex: 1;
 }
 
-.sidebar ul li {
-    margin: 0;
-}
-
+/* Sidebar menu button styling */
+.sidebar ul li { margin: 12px 6px; }
 .sidebar ul li a {
     display: block;
-    padding: 18px 32px;
-    color: #fff;
+    background: var(--card);
+    color: var(--accent);
+    padding: 12px 18px;
+    border-radius: 10px;
     text-decoration: none;
-    font-size: 1.08rem;
-    transition: background 0.18s;
-}
-
-.sidebar ul li a:hover, .sidebar ul li a.logout:hover {
-    background: #394867;
-}
-
-.sidebar ul li a.logout {
-    color: #e63946;
     font-weight: 600;
+    font-size: 15px;
+    box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+    transition: transform var(--trans-fast) ease, box-shadow var(--trans-fast) ease, background var(--trans-fast) ease;
+}
+.sidebar ul li a:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 40px rgba(2,6,23,0.08);
 }
 
 .main-content {
@@ -65,29 +73,63 @@ body {
     min-height: 100vh;
 }
 
-.welcome h1 {
-    margin-top: 0;
-    font-size: 2.2rem;
-    font-weight: 700;
-    color: #232946;
+/* Hero section */
+.hero{ display:block; margin-bottom:28px; padding:0; background:transparent; }
+.hero-visual{
+    position:relative;
+    border-radius:14px;
+    overflow:hidden;
+    /* Subtle background that blends with the page; a left accent bar will
+       visually tie the hero to the sidebar color. */
+    background: linear-gradient(135deg, rgba(52,152,219,0.03), rgba(14,165,233,0.02));
+    background-size: 200% 200%;
+    transition: transform var(--trans-medium) cubic-bezier(.2,.9,.27,1), box-shadow var(--trans-medium) ease, background-position 6s ease;
+    min-height:220px;
 }
-
-.welcome p {
-    color: #555;
-    margin-bottom: 32px;
+.hero-visual::after{
+    /* Decorative accent that matches the sidebar color instead of an image.
+       Kept subtle to avoid overpowering the dashboard. */
+    content: '';
+    position: absolute;
+    right: 36px;
+    top: 14px;
+    width: 240px;
+    height: 160px;
+    background: linear-gradient(120deg, rgba(36,43,67,0.08), rgba(36,43,67,0.03));
+    border-radius: 18px;
+    opacity: 0.9;
+    transform: translate3d(0,0,0) rotate(0deg);
+    transition: transform var(--trans-slow) cubic-bezier(.2,.9,.27,1), opacity var(--trans-fast) ease;
+    pointer-events: none;
 }
-
-.dashboard-cards {
-    display: flex;
-    gap: 32px;
-    flex-wrap: wrap;
-    margin-top: 24px;
+.hero-visual:hover{ transform: translateY(-6px); box-shadow: 0 12px 40px rgba(2,6,23,0.06); background-position: 100% 0%; }
+.hero-visual:hover::after{ transform: translate3d(14px,-8px,0) rotate(8deg) scale(1.02); opacity: 0.18; }
+.hero-left{ position:relative; z-index:2; padding:42px 48px; max-width:720px; }
+.hero-visual::before{
+    /* left vertical accent that matches the sidebar color */
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 58px;
+    background: var(--sidebar-bg);
+    border-top-left-radius: 14px;
+    border-bottom-left-radius: 14px;
+    box-shadow: 2px 0 12px rgba(2,6,23,0.06);
+    z-index: 1;
 }
+.hero-left { padding-left: 110px; }
+.hero-left h1{ font-size:2.6rem; margin:6px 0 8px; color:var(--hero-text); }
+.lead{ color:var(--muted); font-size:1.05rem; margin-bottom:18px; }
+.hero-actions{ display:flex; gap:12px; margin-top:18px; }
 
-.card {
-    background: #fff;
+/* Card layout and interactions */
+.dashboard-cards { display:flex; gap:32px; flex-wrap:wrap; margin-top:24px; }
+.card{
+    background: var(--card);
     border-radius: 14px;
-    box-shadow: 0 4px 24px rgba(44,62,80,0.08);
+    box-shadow: 0 4px 24px rgba(44,62,80,0.06);
     padding: 32px 28px;
     flex: 1 1 260px;
     min-width: 260px;
@@ -95,80 +137,109 @@ body {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    transition: box-shadow 0.2s;
+    transition: box-shadow var(--trans-fast) ease, transform var(--trans-fast) ease;
+    will-change: transform, box-shadow;
 }
+.card:hover{ box-shadow: 0 14px 50px rgba(44,62,80,0.12); transform: translateY(-6px); }
+.card h3{ margin-top:0; margin-bottom:12px; font-size:1.25rem; color:var(--text); }
+.card p{ color:var(--muted); margin-bottom:18px; }
 
-.card:hover {
-    box-shadow: 0 8px 32px rgba(44,62,80,0.16);
-}
-
-.card h3 {
-    margin-top: 0;
-    margin-bottom: 12px;
-    font-size: 1.25rem;
-    color: #232946;
-}
-
-.card p {
-    color: #555;
-    margin-bottom: 18px;
-}
-
-.card-btn {
-    margin-top: auto;
-    background: #232946;
-    color: #fff;
+.card-btn{
+    margin-top:auto;
+    background: var(--accent);
+    color: var(--card-text);
     padding: 10px 26px;
     border-radius: 6px;
     text-decoration: none;
     font-weight: 600;
     font-size: 1rem;
-    transition: background 0.18s;
+    transition: background var(--trans-fast), transform var(--trans-fast), box-shadow var(--trans-fast);
+    will-change: transform;
+    border: none;
+    cursor: pointer;
+}
+.card-btn:hover{ filter: brightness(0.98); transform: translateY(-3px) scale(1.01); box-shadow: 0 8px 20px rgba(44,62,80,0.08); }
+.card-btn.primary{ padding:12px 20px; border-radius:8px; box-shadow:0 6px 18px rgba(44,62,80,0.08); }
+.card-btn.secondary{ background:transparent; color:var(--text); border:1px solid rgba(0,0,0,0.06); padding:10px 18px; border-radius:8px; }
+.card-btn.secondary:hover{ background: rgba(0,0,0,0.03); }
+.card-btn.small{ padding:6px 8px; font-size:13px; }
+.card-btn.danger{ background:#e74c3c; color:white; }
+.card-btn.danger:hover{ box-shadow: 0 8px 18px rgba(231,76,60,0.14); transform: translateY(-3px); }
+
+/* Mini reservations widget inside the card */
+.mini-reservations{ margin-top:8px; width:100%; }
+.mini-reservation{
+    padding:10px; border-radius:8px; background: rgba(0,0,0,0.03); margin-bottom:8px;
+    display:flex; align-items:center; justify-content:space-between;
+    transition: transform var(--trans-fast) ease, box-shadow var(--trans-fast) ease, background var(--trans-fast) ease;
+}
+.mini-reservation:hover{ transform: translateY(-4px); box-shadow: 0 8px 20px rgba(2,6,23,0.06); background: rgba(0,0,0,0.04); }
+.mini-res-left{ max-width:70%; }
+.mini-res-right{ text-align:right; }
+.mini-route{ margin-top:4px; color:#666; }
+.mini-times{ margin-top:6px; }
+.mini-booked{ margin-top:6px; font-size:13px; color:#444; }
+
+/* Search form */
+.dashboard-search-form label{ display:block; margin-top:10px; font-weight:500; color:var(--text); }
+.dashboard-search-form input[type="text"], .dashboard-search-form input[type="date"]{
+    width:100%; padding:10px 8px; margin-top:4px; margin-bottom:12px; border:1px solid rgba(0,0,0,0.06);
+    border-radius:6px; font-size:15px; background:var(--input-bg); color:var(--text); transition:border 0.2s;
 }
 
-.card-btn:hover {
-    background: #394867;
+/* Soft highlight animation when user is guided to the search area */
+.search-highlight {
+    animation: search-pulse 1200ms ease forwards;
+}
+@keyframes search-pulse {
+    0% { box-shadow: 0 6px 24px rgba(52,152,219,0.06); transform: translateY(0); }
+    10% { box-shadow: 0 14px 40px rgba(52,152,219,0.12); transform: translateY(-4px); }
+    70% { box-shadow: 0 10px 30px rgba(52,152,219,0.08); transform: translateY(-2px); }
+    100% { box-shadow: 0 6px 18px rgba(2,6,23,0.06); transform: translateY(0); }
 }
 
-.dashboard-search-form label {
-    display: block;
-    margin-top: 10px;
-    font-weight: 500;
-    color: #232946;
+/* Gentle focus ring for inputs when highlighted */
+.search-highlight input:focus, .search-highlight input:focus-visible {
+    box-shadow: 0 0 0 6px rgba(52,152,219,0.06);
 }
+.dashboard-search-form input:focus{ border:1.5px solid var(--accent); outline:none; }
 
-.dashboard-search-form input[type="text"],
-.dashboard-search-form input[type="date"] {
-    width: 100%;
-    padding: 10px 8px;
-    margin-top: 4px;
-    margin-bottom: 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 15px;
-    background: #f9f9f9;
-    transition: border 0.2s;
-}
+/* Result cards */
+.result-card{ background:var(--card); border-radius:10px; box-shadow:0 2px 12px rgba(44,62,80,0.06); padding:24px 20px; margin-bottom:24px; transition: transform var(--trans-fast), box-shadow var(--trans-fast); }
+.result-card:hover{ transform: translateY(-6px); box-shadow: 0 12px 36px rgba(44,62,80,0.08); }
 
-.dashboard-search-form input[type="text"]:focus,
-.dashboard-search-form input[type="date"]:focus {
-    border: 1.5px solid #3498db;
-    outline: none;
-}
+/* Topbar and user menu */
+.topbar{ margin-left:230px; position:sticky; top:0; z-index:40; justify-content:flex-end; background: transparent; padding: 12px 32px 0 0; }
+.topbar .brand{ display:none; }
+.top-actions{ display:flex; align-items:center; gap:12px; justify-content:flex-end; }
+.icon-btn{ background:var(--card); border:1px solid rgba(44,62,80,0.06); padding:8px; border-radius:8px; cursor:pointer; }
+.avatar-wrap{ position:relative; display:inline-flex; align-items:center; gap:8px; }
+.avatar{ width:44px; height:44px; border-radius:10px; object-fit:cover; box-shadow:0 6px 18px rgba(2,6,23,0.08); border:1px solid rgba(0,0,0,0.06); }
+.dark-theme .avatar{ border-color: rgba(255,255,255,0.06); }
+.avatar-toggle{ background: transparent; color: var(--text); border: none; padding: 6px 8px; border-radius: 8px; cursor: pointer; display:inline-flex; align-items:center; justify-content:center; }
+.avatar-toggle:hover{ background: rgba(0,0,0,0.04); }
+.dark-theme .avatar-toggle:hover{ background: rgba(255,255,255,0.04); }
+.avatar-toggle{ transition: transform 200ms ease, background 140ms ease, color 140ms ease; }
+.user-dropdown{ position:absolute; right:0; top:56px; background:var(--card); min-width:180px; border-radius:10px; box-shadow:0 10px 30px rgba(2,6,23,0.12); padding:8px; z-index:80; opacity:0; transform: translateY(-8px) scale(0.98); transition: opacity 180ms ease, transform 220ms cubic-bezier(.2,.9,.27,1); pointer-events:none; }
+.user-dropdown.open{ opacity:1; transform: translateY(0) scale(1); pointer-events:auto; }
 
-.search-results {
-    margin-top: 40px;
-}
-.result-card {
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 12px rgba(44,62,80,0.06);
-    padding: 24px 20px;
-    margin-bottom: 24px;
-}
-.result-card h4 {
-    margin-top: 0;
-}
-.result-card ul {
-    padding-left: 18px;
+/* Avatar update animation */
+.avatar.updated{ animation: avatar-update 420ms cubic-bezier(.2,.9,.27,1); }
+@keyframes avatar-update{ 0%{ transform: scale(.88); filter: blur(2px); opacity: .6 } 40%{ transform: scale(1.06); filter: blur(0); opacity: 1 } 100%{ transform: scale(1); filter: none; opacity: 1 } }
+
+/* Modal tweaks */
+.modal{ display:none; position:fixed; left:0; top:0; right:0; bottom:0; background:rgba(2,6,23,0.45); align-items:center; justify-content:center; }
+.modal-content{ width:420px; max-width:92%; }
+
+/* Entrance animation */
+@keyframes card-enter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.card { animation: card-enter var(--trans-medium) ease both; }
+
+@media (max-width:900px){
+    .hero-left{ padding:24px; }
+    .hero-visual{ min-height:180px; }
+    .hero-left h1{ font-size:1.8rem; }
+    .hero-actions{ flex-direction:column; align-items:flex-start; }
+    .card-btn.primary, .card-btn.secondary{ width:100%; }
+    .main-content{ padding:24px 18px; }
 }

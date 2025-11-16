@@ -1,48 +1,108 @@
-body {
-    font-family: Arial, sans-serif;
-    background: #f5f7fa;
-    margin: 0;
-    padding: 0;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+/* Use a consistent UI font across the app */
+html, body, input, textarea, select, button {
+    --ui-font: 'Inter', 'Segoe UI', Arial, sans-serif;
+    font-family: var(--ui-font);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
 }
+/* Theme variables */
+:root{
+    --bg: #f5f7fa;
+    --card: #ffffff;
+    --muted: #666;
+    --accent: #3498db;
+    --text: #222;
+    --hero-text: #111;
+    --sidebar-bg: #232946;
+    --sidebar-text: #ffffff;
+    --card-text: #ffffff;
+    --input-bg: #f9f9f9;
+    --sidebar-item-hover: rgba(0,0,0,0.06);
+    /* Timing tokens for interactive animations */
+    --trans-fast: 160ms;
+    --trans-medium: 320ms;
+    --trans-slow: 700ms;
+}
+.dark-theme{
+    --bg: #0f1724;
+    --card: #0b1220;
+    --muted: #9aa4b2;
+    --accent: #60a5fa;
+    --text: #e6eef8;
+    --hero-text: #eaf4ff;
+    --sidebar-bg: #071026;
+    --sidebar-text: var(--text);
+    --sidebar-item-hover: rgba(255,255,255,0.03);
+    background-color: var(--bg);
+    color: var(--text);
+}
+
+body{ background: var(--bg); color: var(--text); }
+
+/* Ensure form controls inherit the same font and colors */
+input, textarea, select, button { font-family: inherit; color: inherit; }
+
+/* Header / topbar */
+.topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 18px; background:var(--card); box-shadow:0 1px 6px rgba(0,0,0,0.06);
+}
+.topbar .brand{ font-weight:700; }
+.topbar .top-actions{ display:flex; align-items:center; gap:12px; }
+.topbar button{ background:transparent; border:none; cursor:pointer; font-size:18px; }
+.user-button{ display:flex; align-items:center; gap:6px; }
+.user-button img{ border-radius:8px; width:40px; height:40px; object-fit:cover; }
+
+/* Modal styles */
+.modal{ display:none; position:fixed; left:0; top:0; right:0; bottom:0; background:rgba(0,0,0,0.4); align-items:center; justify-content:center; }
+.modal[aria-hidden="false"]{ display:flex; }
+.modal-content{ background:var(--card); padding:18px; border-radius:10px; box-shadow:0 6px 30px rgba(2,6,23,0.6); max-width:420px; width:90%; position:relative; }
+.modal-close{ position:absolute; right:10px; top:8px; background:transparent; border:none; font-size:18px; cursor:pointer; }
+.card-btn{ background:var(--accent); color:#fff; padding:8px 12px; border-radius:6px; border:none; cursor:pointer; }
+
 h2 {
     color: #2c3e50;
 }
 form {
-    background: #fff;
+    background: var(--card);
     padding: 20px;
     margin: 30px auto;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     max-width: 400px;
 }
 input[type="text"], input[type="password"], input[type="date"] {
     width: 90%;
     padding: 8px;
     margin: 8px 0 16px 0;
-    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,0.06);
     border-radius: 4px;
+    background: var(--input-bg);
+    color: var(--text);
 }
 button {
-    background: #3498db;
-    color: #fff;
+    background: var(--accent);
+    color: var(--card-text);
     border: none;
     padding: 10px 18px;
     border-radius: 4px;
     cursor: pointer;
 }
 button:hover {
-    background: #2980b9;
+    filter: brightness(0.95);
 }
 ul {
     list-style: none;
     padding: 0;
 }
 li {
-    background: #fff;
+    background: var(--card);
     margin: 10px 0;
     padding: 12px;
     border-radius: 6px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
 a {
     color: #3498db;
@@ -61,7 +121,7 @@ ul[style] {
 
 body {
     background: #f5f7fa;
-    font-family: 'Segoe UI', Arial, sans-serif;
+    font-family: var(--ui-font);
     color: #222;
     margin: 0;
     padding: 0;
@@ -80,9 +140,9 @@ a:hover {
 .container {
     max-width: 400px;
     margin: 60px auto;
-    background: #fff;
+    background: var(--card);
     border-radius: 12px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
     padding: 40px 30px 30px 30px;
 }
 
@@ -96,34 +156,35 @@ input[type="text"], input[type="password"], input[type="email"] {
     width: 100%;
     padding: 12px 10px;
     margin: 10px 0 20px 0;
-    border: 1px solid #ddd;
+    border: 1px solid rgba(0,0,0,0.06);
     border-radius: 6px;
     font-size: 16px;
-    background: #f9f9f9;
+    background: var(--input-bg);
+    color: var(--text);
     transition: border 0.2s;
 }
 
 input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus {
-    border: 1.5px solid #3498db;
+    border: 1.5px solid var(--accent);
     outline: none;
 }
 
 button, input[type="submit"] {
     width: 100%;
-    background: #3498db;
-    color: #fff;
+    background: var(--accent);
+    color: var(--card-text);
     border: none;
     padding: 12px;
     border-radius: 6px;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: filter 0.12s ease;
     margin-top: 10px;
 }
 
 button:hover, input[type="submit"]:hover {
-    background: #217dbb;
+    filter: brightness(0.95);
 }
 
 .form-link {
@@ -133,8 +194,8 @@ button:hover, input[type="submit"]:hover {
 }
 
 .dashboard-header {
-    background: #3498db;
-    color: #fff;
+    background: linear-gradient(90deg, rgba(52,152,219,0.95), rgba(35,130,210,0.95));
+    color: var(--card-text);
     padding: 24px 0 16px 24px;
     border-radius: 0 0 16px 16px;
     margin-bottom: 32px;
@@ -145,17 +206,11 @@ button:hover, input[type="submit"]:hover {
     font-size: 2rem;
 }
 
-.dashboard-nav {
-    margin-top: 10px;
-    padding-left: 24px;
-}
-
 .dashboard-nav a {
-    color: #fff;
+    color: var(--card-text);
     margin-right: 18px;
     font-weight: 500;
 }
-
 .dashboard-nav a:hover {
     text-decoration: underline;
 }
@@ -170,35 +225,35 @@ button:hover, input[type="submit"]:hover {
 }
 
 .alert, .flash-message {
-    background: #fff;
-    border-left: 6px solid #e63946;
-    color: #e63946;
+    background: var(--card);
+    border-left: 6px solid var(--accent);
+    color: var(--accent);
     padding: 16px 24px;
     margin-bottom: 16px;
     border-radius: 8px;
     font-size: 1.08rem;
-    box-shadow: 0 2px 8px rgba(44,62,80,0.06);
+    box-shadow: 0 2px 8px rgba(44,62,80,0.04);
     transition: box-shadow 0.2s;
 }
 
 .alert-success {
     border-left-color: #2ecc71;
     color: #218c5a;
-    background: #f0fcf5;
+    background: rgba(46,204,113,0.06);
 }
 
 .alert-info {
-    border-left-color: #3498db;
-    color: #217dbb;
-    background: #f0f7fd;
+    border-left-color: var(--accent);
+    color: var(--accent);
+    background: rgba(52,152,219,0.06);
 }
 
 .search-container {
     max-width: 420px;
     margin: 60px auto;
-    background: #fff;
+    background: var(--card);
     border-radius: 12px;
-    box-shadow: 0 4px 24px rgba(44,62,80,0.08);
+    box-shadow: 0 4px 24px rgba(44,62,80,0.06);
     padding: 40px 30px 30px 30px;
 }
 
@@ -212,7 +267,7 @@ button:hover, input[type="submit"]:hover {
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
-    color: #232946;
+    color: var(--text);
 }
 
 .search-form input[type="text"],
@@ -220,23 +275,24 @@ button:hover, input[type="submit"]:hover {
     width: 100%;
     padding: 12px 10px;
     margin-bottom: 18px;
-    border: 1px solid #ddd;
+    border: 1px solid rgba(0,0,0,0.06);
     border-radius: 6px;
     font-size: 16px;
-    background: #f9f9f9;
+    background: var(--input-bg);
+    color: var(--text);
     transition: border 0.2s;
 }
 
 .search-form input[type="text"]:focus,
 .search-form input[type="date"]:focus {
-    border: 1.5px solid #3498db;
+    border: 1.5px solid var(--accent);
     outline: none;
 }
 
 .search-form button {
     width: 100%;
-    background: #3498db;
-    color: #fff;
+    background: var(--accent);
+    color: var(--card-text);
     border: none;
     padding: 12px;
     border-radius: 6px;
@@ -248,13 +304,13 @@ button:hover, input[type="submit"]:hover {
 }
 
 .search-form button:hover {
-    background: #217dbb;
+    filter: brightness(0.95);
 }
 
 .time {
-  font-weight: bold;
-  color: #2d3e50;
-  letter-spacing: 1px;
+    font-weight: bold;
+    color: var(--muted);
+    letter-spacing: 1px;
 }
 ul {
   margin: 0 0 0 10px;

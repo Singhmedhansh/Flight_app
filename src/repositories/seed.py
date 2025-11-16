@@ -1,23 +1,21 @@
 # Import necessary libraries
-# import the connector
 import mysql.connector
 import pandas as pd
 from sqlalchemy import create_engine
 
 # establish a connection to MySQL database
 connection = mysql.connector.connect(
-  host="localhost",
-  user="educative",
-  password="BMWfav3$",
-  database="flight"
+    host="localhost",
+    user="educative",
+    password="BMWfav3$",
+    database="flight"
 )
 
-# create a cusrsor object to perform quries
+# create a cursor object to perform queries
 mycursor = connection.cursor()
 
-
 # Step 1: Create a DataFrame with the data
-df = pd.read_csv('C:/Users/singh/Downloads/Flight_res/dataset/airlines.csv')  
+df = pd.read_csv(r"C:\Users\singh\Downloads\Flight_reservation_project\src\dataset\airlines.csv")
 
 # Step 2: Create a SQLAlchemy engine to connect to the MySQL database
 engine = create_engine("mysql+mysqlconnector://educative:BMWfav3$@localhost/flight")
@@ -27,17 +25,10 @@ df.to_sql('airline', con=engine, if_exists='append', index=False)
 
 connection.commit()
 
-#print(mycursor.rowcount, "record inserted.")
-#mycursor.execute("Select * from Airline")
-
-
-
 ################################################################################################################
 
 # Load the dataframe from the CSV file
-df = pd.read_csv('C:/Users/singh/Downloads/Flight_res/dataset/airports.csv')
-
-mycursor = connection.cursor()
+df = pd.read_csv(r"C:\Users\singh\Downloads\Flight_reservation_project\src\dataset\airports.csv")
 
 # Function to insert into the Address table and get address_id
 def insert_address(city, state, country):
@@ -45,7 +36,6 @@ def insert_address(city, state, country):
         INSERT INTO address (city, state, country)
         VALUES (%s, %s, %s)
     """, (city, state, country))
-    
     connection.commit()  # Save the changes
     return mycursor.lastrowid  # Get the last inserted address_id
 
@@ -64,22 +54,15 @@ for index, row in df.iterrows():
         INSERT INTO airport (code, name, address_id)
         VALUES (%s, %s, %s)
     """, (row['code'], row['name'], address_id))
-    
     connection.commit()  # Save the changes
-
-
-
 
 ################################################################################################################
 
 # Load the dataframe from the CSV file
-flights_df = pd.read_csv('C:/Users/singh/Downloads/Flight_res/dataset/flights.csv')
+flights_df = pd.read_csv(r"C:\Users\singh\Downloads\Flight_reservation_project\src\dataset\flights.csv")
 print(flights_df.columns)
-# Create a cursor object
-mycursor = connection.cursor()
 
 # Prepare an SQL query to insert data into the Flight table
-# flight_no
 insert_flight_query = """
     INSERT INTO flight (airline_code, distance_km, dep_time, arri_time, dep_port, arri_port, booked_seats)
     VALUES (%s, %s, %s, %s, %s, %s, 0)
@@ -100,11 +83,8 @@ for i in range(0, len(flight_data), batch_size):
 
 print(f"{len(flight_data)} flights inserted into the database.")
 
-
 ################################################################################################################
 # Create an Admin
-# Create a cursor object
-mycursor = connection.cursor()
 
 # Insert roles
 mycursor.execute("INSERT INTO Role(name) VALUES ('admin');")
@@ -124,8 +104,7 @@ admin_role_id = mycursor.fetchone()[0]
 # Insert into Account_Role (assign admin role to admin_user)
 mycursor.execute("INSERT INTO account_Role(account_id, role_id) VALUES (%s, %s);", (admin_account_id, admin_role_id))
 
-# Commit the changes
+# Commit the changes and close connections
 connection.commit()
-
 mycursor.close()
 connection.close()
