@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Progress Bar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .step-line {
+            transition: all 0.5s ease;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 min-h-screen p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl font-bold text-white text-center mb-12">Flight Booking Progress</h1>
+
+        <!-- Progress Bar Component -->
+        <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl mb-8">
+            <!-- Desktop Progress Bar -->
+            <div class="hidden md:block">
+                <div class="relative">
+                    <!-- Progress Line Background -->
+                    <div class="absolute top-8 left-0 w-full h-1 bg-slate-700 rounded-full"></div>
+                    
+                    <!-- Active Progress Line -->
+                    <div id="progressLine" class="absolute top-8 left-0 h-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full step-line transition-all duration-500" style="width: 0%"></div>
+
+                    <!-- Steps Container -->
+                    <div class="relative flex justify-between">
+                        <!-- Step 1: Search -->
+                        <div class="flex flex-col items-center" style="width: 33.33%">
+                            <div id="step1-circle" class="w-16 h-16 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/50 transition-all duration-500">
+                                <i id="step1-icon" class="fas fa-magnifying-glass text-white text-xl"></i>
+                            </div>
+                            <div class="mt-4 text-center">
+                                <p class="text-white font-semibold text-lg">Search</p>
+                                <p class="text-slate-400 text-sm mt-1">Find your flight</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Passenger Details -->
+                        <div class="flex flex-col items-center" style="width: 33.33%">
+                            <div id="step2-circle" class="w-16 h-16 rounded-full bg-slate-700 flex items-center justify-center transition-all duration-500">
+                                <i id="step2-icon" class="fas fa-user text-slate-400 text-xl"></i>
+                            </div>
+                            <div class="mt-4 text-center">
+                                <p id="step2-text" class="text-slate-400 font-semibold text-lg">Passenger Details</p>
+                                <p class="text-slate-500 text-sm mt-1">Enter information</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Payment -->
+                        <div class="flex flex-col items-center" style="width: 33.33%">
+                            <div id="step3-circle" class="w-16 h-16 rounded-full bg-slate-700 flex items-center justify-center transition-all duration-500">
+                                <i id="step3-icon" class="fas fa-credit-card text-slate-400 text-xl"></i>
+                            </div>
+                            <div class="mt-4 text-center">
+                                <p id="step3-text" class="text-slate-400 font-semibold text-lg">Payment</p>
+                                <p class="text-slate-500 text-sm mt-1">Complete booking</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Progress Bar -->
+            <div class="md:hidden">
+                <div class="space-y-4">
+                    <!-- Step 1 -->
+                    <div id="mobile-step1" class="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-blue-600/20 to-indigo-600/20 border border-blue-500/50">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-check text-white"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-white font-semibold">Search</p>
+                            <p class="text-slate-300 text-sm">Find your flight</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">1</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div id="mobile-step2" class="flex items-center gap-4 p-4 rounded-2xl bg-slate-800/50 border border-slate-700">
+                        <div class="w-12 h-12 rounded-full bg-slate-700 flex items-center justify-center">
+                            <i class="fas fa-user text-slate-400"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-slate-400 font-semibold">Passenger Details</p>
+                            <p class="text-slate-500 text-sm">Enter information</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center">
+                            <span class="text-slate-400 font-bold text-sm">2</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div id="mobile-step3" class="flex items-center gap-4 p-4 rounded-2xl bg-slate-800/50 border border-slate-700">
+                        <div class="w-12 h-12 rounded-full bg-slate-700 flex items-center justify-center">
+                            <i class="fas fa-credit-card text-slate-400"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-slate-400 font-semibold">Payment</p>
+                            <p class="text-slate-500 text-sm">Complete booking</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center">
+                            <span class="text-slate-400 font-bold text-sm">3</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Buttons for Demo -->
+        <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+            <h3 class="text-white font-semibold mb-4 text-center">Demo Controls</h3>
+            <div class="flex flex-wrap gap-3 justify-center">
+                <button onclick="setStep(1)" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition-all">
+                    Step 1: Search
+                </button>
+                <button onclick="setStep(2)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-semibold transition-all">
+                    Step 2: Passenger Details
+                </button>
+                <button onclick="setStep(3)" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-semibold transition-all">
+                    Step 3: Payment
+                </button>
+            </div>
+        </div>
+
+        <!-- Current Step Display -->
+        <div class="mt-8 text-center">
+            <p class="text-slate-400">Current Step: <span id="currentStepDisplay" class="text-white font-bold">1 - Search</span></p>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+
+        function setStep(step) {
+            currentStep = step;
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const progressLine = document.getElementById('progressLine');
+            const stepNames = ['Search', 'Passenger Details', 'Payment'];
+            
+            // Update current step display
+            document.getElementById('currentStepDisplay').textContent = `${currentStep} - ${stepNames[currentStep - 1]}`;
+
+            // Update progress line width
+            const progressWidth = ((currentStep - 1) / 2) * 100;
+            progressLine.style.width = `${progressWidth}%`;
+
+            // Update all steps
+            for (let i = 1; i <= 3; i++) {
+                const circle = document.getElementById(`step${i}-circle`);
+                const icon = document.getElementById(`step${i}-icon`);
+                const text = document.getElementById(`step${i}-text`);
+                const mobileStep = document.getElementById(`mobile-step${i}`);
+
+                if (i < currentStep) {
+                    // Completed step
+                    circle.className = 'w-16 h-16 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/50 transition-all duration-500';
+                    icon.className = 'fas fa-check text-white text-xl';
+                    if (text) text.className = 'text-white font-semibold text-lg';
+                    
+                    // Mobile
+                    if (mobileStep) {
+                        mobileStep.className = 'flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-blue-600/20 to-indigo-600/20 border border-blue-500/50';
+                        const mobileIcon = mobileStep.querySelector('i');
+                        const mobileCircle = mobileStep.querySelector('.w-12');
+                        mobileIcon.className = 'fas fa-check text-white';
+                        mobileCircle.className = 'w-12 h-12 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg';
+                    }
+                } else if (i === currentStep) {
+                    // Current step
+                    circle.className = 'w-16 h-16 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/50 ring-4 ring-blue-500/30 transition-all duration-500';
+                    const icons = ['fa-magnifying-glass', 'fa-user', 'fa-credit-card'];
+                    icon.className = `fas ${icons[i-1]} text-white text-xl`;
+                    if (text) text.className = 'text-white font-semibold text-lg';
+                    
+                    // Mobile
+                    if (mobileStep) {
+                        mobileStep.className = 'flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-blue-600/30 to-indigo-600/30 border-2 border-blue-500 shadow-lg shadow-blue-500/30';
+                        const mobileText = mobileStep.querySelector('.flex-1 p');
+                        if (mobileText) mobileText.className = 'text-white font-semibold';
+                    }
+                } else {
+                    // Future step
+                    circle.className = 'w-16 h-16 rounded-full bg-slate-700 flex items-center justify-center transition-all duration-500';
+                    const icons = ['fa-magnifying-glass', 'fa-user', 'fa-credit-card'];
+                    icon.className = `fas ${icons[i-1]} text-slate-400 text-xl`;
+                    if (text) text.className = 'text-slate-400 font-semibold text-lg';
+                    
+                    // Mobile
+                    if (mobileStep) {
+                        mobileStep.className = 'flex items-center gap-4 p-4 rounded-2xl bg-slate-800/50 border border-slate-700';
+                        const mobileCircle = mobileStep.querySelector('.w-12');
+                        mobileCircle.className = 'w-12 h-12 rounded-full bg-slate-700 flex items-center justify-center';
+                    }
+                }
+            }
+        }
+
+        // Initialize on page load
+        updateProgress();
+    </script>
+</body>
+</html>

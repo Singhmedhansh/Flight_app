@@ -4,125 +4,414 @@
     <title>Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-      .time {
-        font-weight: bold;
-        color: #2d3e50;
-        letter-spacing: 1px;
-      }
-      ul.route-list {
-        margin: 0 0 0 10px;
-        padding: 0 0 0 15px;
-      }
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #60a5fa, #818cf8);
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #3b82f6, #6366f1);
+        }
+        
+        /* Custom Range Slider */
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #60a5fa, #818cf8);
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(96, 165, 250, 0.6);
+            border: 3px solid rgba(255, 255, 255, 0.9);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #60a5fa, #818cf8);
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(96, 165, 250, 0.6);
+            border: 3px solid rgba(255, 255, 255, 0.9);
+        }
+        
+        .card-icon {
+            font-size: 2.8em;
+            background: linear-gradient(135deg, #60a5fa, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            display: block;
+            text-align: center;
+            filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.3));
+        }
+        .dashboard-banner {
+            position: relative;
+            width: 100%;
+            border-radius: 32px;
+            overflow: hidden;
+            min-height: 240px;
+            margin-bottom: 48px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+        .dashboard-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            filter: brightness(0.5) saturate(1.2);
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .banner-text {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 48px 56px;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+        .banner-text h1 {
+            font-size: 2.8em;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: -1px;
+        }
+        .banner-text p {
+            font-size: 1.3em;
+            font-weight: 400;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            font-family: 'Inter', sans-serif;
+        }
     </style>
 </head>
 <body>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <ul class="flashes">
-          {% for category, message in messages %}
-            <li class="alert {% if category %}alert-{{ category }}{% endif %}">{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
+    <!-- Profile icon at top right -->
+    <div class="profile-icon-container">
+        <a href="{{ url_for('profile') }}" title="Profile">
+            {% if user and user.profile_pic_url %}
+                <img src="{{ user.profile_pic_url }}" alt="Profile" class="profile-pic">
+            {% else %}
+                <i class="fa-solid fa-user-circle profile-icon"></i>
+            {% endif %}
+        </a>
+    </div>
 
+    <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
             <h2>✈️ Flight Booker</h2>
         </div>
         <ul>
-            <li><a href="/dashboard">Dashboard</a></li>
-            <li><a href="/reservations">My Reservations</a></li>
-            <li><a href="/logout" class="logout">Log Out</a></li>
+            <li>
+                <a href="{{ url_for('dashboard') }}">
+                    <i class="fa-solid fa-house"></i>
+                    <span style="margin-left:8px;">Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('reservations') }}">
+                    <i class="fa-solid fa-ticket"></i>
+                    <span style="margin-left:8px;">My Reservations</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('logout') }}" class="logout">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span style="margin-left:8px;">Log Out</span>
+                </a>
+            </li>
         </ul>
     </div>
 
-    <!-- Account icon at top right -->
-    <div class="account-icon">
-        <a href="/profile" title="Account">
-            <i class="fa-solid fa-user-circle"></i>
-        </a>
-    </div>
-
+    <!-- Main Content -->
     <div class="main-content">
-        <div class="welcome">
-            <h1>Welcome, {{ username }}!</h1>
-            <p>What would you like to do today?</p>
+        <!-- Banner -->
+        <div class="dashboard-banner">
+            <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80" alt="Flight Banner">
+            <div class="banner-text">
+                <h1>Welcome, {{ username|capitalize }}!</h1>
+                <p>Ready for your next journey?</p>
+            </div>
         </div>
-        <div class="dashboard-cards">
-            <div class="card">
-                <h3>Search Flights</h3>
-                <p>Find and book flights easily.</p>
-                <form method="post" class="dashboard-search-form">
-                    <label for="origin">Origin:</label>
-                    <input type="text" id="origin" name="origin" placeholder="Enter origin (e.g. DEL)" required>
-                    <label for="destination">Destination:</label>
-                    <input type="text" id="destination" name="destination" placeholder="Enter destination (e.g. BOM)" required>
-                    <label for="date">Date:</label>
-                    <input type="date" id="date" name="date" required>
-                    <button type="submit" class="card-btn">Search</button>
+
+        <div class="dashboard-cards-container">
+            <!-- Search Flights Card - Bento Grid Span 2 -->
+            <div class="dashboard-card card-search">
+                <div class="card-header">
+                    <i class="fa-solid fa-plane-departure card-icon"></i>
+                    <div>
+                        <h2>Search Flights</h2>
+                        <p>Find and book flights easily.</p>
+                    </div>
+                </div>
+                <form method="post" action="{{ url_for('dashboard') }}" class="search-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="origin">Origin:</label>
+                            <input type="text" id="origin" name="origin" placeholder="e.g. Delhi or DEL" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="destination">Destination:</label>
+                            <input type="text" id="destination" name="destination" placeholder="e.g. Mumbai or BOM" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="date">Date:</label>
+                            <input type="date" id="date" name="date" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="dashboard-btn btn-search">Search Flights</button>
                 </form>
             </div>
-            <div class="card">
-                <h3>My Reservations</h3>
-                <p>View and manage your bookings.</p>
-                <a href="/reservations" class="card-btn">View</a>
+
+            <!-- My Reservations Card -->
+            <div class="dashboard-card card-reservations">
+                <div class="card-header">
+                    <i class="fa-solid fa-calendar-check card-icon"></i>
+                    <div>
+                        <h2>My Reservations</h2>
+                        <p>View and manage your bookings.</p>
+                    </div>
+                </div>
+                {% if reservations %}
+                    <div class="reservation-list">
+                    {% for r in reservations %}
+                        <div class="reservation-summary">
+                            <div class="reservation-route">
+                                <span class="reservation-city">{{ r.origin }}</span>
+                                <span class="reservation-arrow">→</span>
+                                <span class="reservation-city">{{ r.destination }}</span>
+                            </div>
+                            <div class="reservation-date">
+                                {{ r.dep_time.strftime('%b %d, %Y %H:%M') if r.dep_time else '' }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="empty-state">No upcoming reservations.</p>
+                {% endif %}
+                <a href="{{ url_for('reservations') }}" class="dashboard-btn btn-secondary">View All Reservations</a>
             </div>
-            <div class="card">
-                <h3>Account</h3>
-                <p>Update your profile and settings.</p>
-                <a href="/profile" class="card-btn">Profile</a>
+
+            <!-- Account Card -->
+            <div class="dashboard-card card-account">
+                <div class="card-header">
+                    <i class="fa-solid fa-user-gear card-icon"></i>
+                    <div>
+                        <h2>Account</h2>
+                        <p>Update your profile and settings.</p>
+                    </div>
+                </div>
+                <p class="card-description">Manage your personal information and preferences.</p>
+                <a href="{{ url_for('profile') }}" class="dashboard-btn btn-secondary">Go to Profile</a>
             </div>
         </div>
 
+        <!-- Search Results Section -->
         {% if search_results is not none %}
-        <div class="search-results">
-            <h2>Search Results</h2>
+        <div class="mt-12">
+            <h2 class="text-3xl font-bold text-white mb-6">Search Results</h2>
+            
             {% if search_results|length == 0 %}
-                <p>No flights found for the selected route and date.</p>
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-12 text-center">
+                    <i class="fas fa-search text-slate-400 text-5xl mb-4"></i>
+                    <p class="text-slate-300">No flights found for the selected route and date.</p>
+                </div>
             {% else %}
+                <div class="flex gap-6">
+                    <!-- Filters Sidebar -->
+                    <div class="w-72">
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 sticky top-8 shadow-md">
+                            <div class="flex items-center gap-2 mb-6">
+                                <i class="fas fa-sliders-h text-blue-600"></i>
+                                <h3 class="text-slate-900 font-bold text-lg">Filters</h3>
+                            </div>
+                            
+                            <!-- Price Filter -->
+                            <div class="mb-6 pb-6 border-b border-slate-200">
+                                <div class="flex justify-between items-center mb-4">
+                                    <label class="text-slate-700 text-sm font-semibold flex items-center gap-2">
+                                        <i class="fas fa-dollar-sign text-blue-600 text-sm"></i>
+                                        Max Price
+                                    </label>
+                                    <span id="priceValue" class="text-blue-600 font-bold text-lg">$2000</span>
+                                </div>
+                                <input type="range" id="priceRange" min="0" max="2000" step="50" value="2000" 
+                                       class="w-full h-2 rounded-full appearance-none cursor-pointer accent-blue-600 bg-slate-200">
+                                <div class="flex justify-between mt-3">
+                                    <span class="text-slate-500 text-xs font-semibold">$0</span>
+                                    <span class="text-slate-500 text-xs font-semibold">$2000</span>
+                                </div>
+                            </div>
+
+                            <!-- Stops Filter -->
+                            <div class="mb-6 pb-6 border-b border-slate-200">
+                                <label class="text-slate-700 text-sm font-semibold mb-4 block flex items-center gap-2">
+                                    <i class="fas fa-plane-departure text-blue-600 text-sm"></i>
+                                    Stops
+                                </label>
+                                <div class="space-y-3">
+                                    <label class="flex items-center gap-3 cursor-pointer">
+                                        <input type="checkbox" class="stopsFilter h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" value="0" checked>
+                                        <span class="text-slate-700 text-sm">Non-stop</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 cursor-pointer">
+                                        <input type="checkbox" class="stopsFilter h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" value="1" checked>
+                                        <span class="text-slate-700 text-sm">1 Stop</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 cursor-pointer">
+                                        <input type="checkbox" class="stopsFilter h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" value="2" checked>
+                                        <span class="text-slate-700 text-sm">2+ Stops</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Airlines Filter -->
+                            <div class="mb-6">
+                                <label class="text-slate-700 text-sm font-semibold mb-4 block flex items-center gap-2">
+                                    <i class="fas fa-building text-blue-600 text-sm"></i>
+                                    Airlines
+                                </label>
+                                <div class="space-y-3 max-h-56 overflow-y-auto pr-2 custom-scrollbar">
+                                    {% for airline in unique_airlines %}
+                                    <label class="flex items-center gap-3 cursor-pointer">
+                                        <input type="checkbox" class="airlineFilter h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" value="{{ airline }}" checked>
+                                        <span class="text-slate-700 text-sm">{{ AIRLINE_NAMES.get(airline, airline) }}</span>
+                                    </label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <button onclick="applyFilters()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-all duration-200">
+                                Apply Filters
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Flight Results -->
+                    <div class="w-3/4 flex flex-col gap-2 h-fit" id="flightResults">
                 {% for flight in search_results %}
-                  {% set segments = flight.itineraries[0].segments %}
-                  <div class="result-card">
-                    <p>
-                      <strong>Airline:</strong>
-                      {% set code = segments[0].carrierCode %}
-                      {{ AIRLINE_NAMES.get(code, code) }} ({{ code }})<br>
-                      <strong>From:</strong> {{ segments[0].departure.city }} ({{ segments[0].departure.iataCode }})<br>
-                      <strong>To:</strong> {{ segments[-1].arrival.city }} ({{ segments[-1].arrival.iataCode }})<br>
-                      <strong>Departure:</strong>
-                      {{ segments[0].departure.at.split('T')[0] }} &nbsp;
-                      <span class="time">{{ segments[0].departure.at.split('T')[1] }}</span><br>
-                      <strong>Arrival:</strong>
-                      {{ segments[-1].arrival.at.split('T')[0] }} &nbsp;
-                      <span class="time">{{ segments[-1].arrival.at.split('T')[1] }}</span><br>
-                      <strong>Stops:</strong>
-                      {% if segments|length == 1 %}
-                        Non-stop
-                      {% else %}
-                        {{ segments|length - 1 }} stop{{ 's' if segments|length > 2 else '' }}
-                      {% endif %}<br>
-                      <strong>Route:</strong>
-                      <ul class="route-list">
-                        {% for seg in segments %}
-                          <li>
-                            {{ AIRLINE_NAMES.get(seg.carrierCode, seg.carrierCode) }} ({{ seg.carrierCode }}) :
-                            {{ seg.departure.city }} ({{ seg.departure.iataCode }}) ({{ seg.departure.at.split('T')[0] }} {{ seg.departure.at.split('T')[1] }})
-                            →
-                            {{ seg.arrival.city }} ({{ seg.arrival.iataCode }}) ({{ seg.arrival.at.split('T')[0] }} {{ seg.arrival.at.split('T')[1] }})
-                          </li>
-                        {% endfor %}
-                      </ul>
-                      <strong>Price:</strong> {{ flight.price.total }} {{ flight.price.currency }}
-                    </p>
-                    <form method="post" action="{{ url_for('book', flight_id=loop.index0) }}">
-                      <input type="hidden" name="flight_data" value='{{ flight | tojson | safe }}'>
-                      <button type="submit" class="card-btn">Book</button>
-                    </form>
-                  </div>
+                    {% set segments = flight.itineraries[0].segments %}
+                    {% set price = flight.price.total if flight.price else 'N/A' %}
+                    {% set is_cheapest = cheapest_flight and flight == cheapest_flight %}
+                    
+                    <div class="result-card flight-card bg-white text-slate-900 shadow-sm rounded-xl h-24 p-4 flex flex-row items-center justify-between" 
+                         data-price="{{ price }}"
+                         data-stops="{{ segments|length - 1 }}"
+                         data-airline="{{ segments[0].carrierCode }}">
+                        <!-- Col 1: Airline (20%) -->
+                        <div class="w-1/5 flex items-center gap-3">
+                            <img src="https://logo.clearbit.com/{{ AIRLINE_NAMES.get(segments[0].carrierCode, segments[0].carrierCode).lower().replace(' ', '') }}.com" 
+                                 alt="{{ AIRLINE_NAMES.get(segments[0].carrierCode, segments[0].carrierCode) }}" 
+                                 class="w-10 h-10 rounded-lg bg-slate-100 p-1.5 border border-slate-200"
+                                 onerror="this.src='https://via.placeholder.com/40?text={{ segments[0].carrierCode }}'">
+                            <div class="leading-tight">
+                                <div class="text-sm font-semibold text-slate-900">{{ AIRLINE_NAMES.get(segments[0].carrierCode, segments[0].carrierCode) }}</div>
+                                <div class="text-xs text-slate-500">{{ segments[0].carrierCode }}{{ segments[0].number if segments[0].number is defined else '' }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Col 2: Times + Line (40%) -->
+                        <div class="w-2/5 flex items-center gap-4">
+                            <div class="text-left">
+                                <div class="text-lg font-bold text-slate-900">{{ segments[0].departure.at|format_datetime if segments[0].departure.at is not string else segments[0].departure.at.split('T')[1][:5] if 'T' in segments[0].departure.at else segments[0].departure.at }}</div>
+                                <div class="text-xs text-slate-500">{{ segments[0].departure.iataCode }}</div>
+                            </div>
+                            <div class="flex-grow flex flex-col items-center">
+                                {% if segments|length == 1 %}
+                                    <span class="text-xs text-emerald-600 font-semibold mb-1">Non-stop</span>
+                                {% else %}
+                                    <span class="text-xs text-amber-600 font-semibold mb-1">{{ segments|length - 1 }} Stop{{ 's' if segments|length > 2 else '' }}</span>
+                                {% endif %}
+                                <div class="relative w-full">
+                                    <div class="h-px bg-slate-300 w-full"></div>
+                                    <i class="fas fa-plane absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-slate-500 text-xs bg-white px-1"></i>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-lg font-bold text-slate-900">{{ segments[-1].arrival.at|format_datetime if segments[-1].arrival.at is not string else segments[-1].arrival.at.split('T')[1][:5] if 'T' in segments[-1].arrival.at else segments[-1].arrival.at }}</div>
+                                <div class="text-xs text-slate-500">{{ segments[-1].arrival.iataCode }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Col 3: Duration (20%) -->
+                        <div class="w-1/5 text-center text-xs text-slate-500">
+                            {{ flight.itineraries[0].duration if flight.itineraries[0].duration is defined else 'Duration N/A' }}
+                        </div>
+
+                        <!-- Col 4: Price + Button (20%) -->
+                        <div class="w-1/5 flex items-center justify-end gap-3">
+                            {% if price != 'N/A' %}
+                            <div class="text-right">
+                                <div class="text-sm font-bold text-slate-900">${{ price }}</div>
+                            </div>
+                            {% endif %}
+                            <form method="post" action="{{ url_for('booking') }}">
+                                <input type="hidden" name="flight_data" value='{{ flight | tojson | safe }}'>
+                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg">
+                                    View Deals
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 {% endfor %}
+                    </div>
+                </div>
+                
+                <script>
+                    const flights = {{ search_results | tojson | safe }};
+                    
+                    // Price range slider
+                    const priceRange = document.getElementById('priceRange');
+                    const priceValue = document.getElementById('priceValue');
+                    
+                    priceRange.addEventListener('input', (e) => {
+                        priceValue.textContent = '$' + e.target.value;
+                    });
+                    
+                    function applyFilters() {
+                        const maxPrice = parseFloat(priceRange.value);
+                        const allowedStops = Array.from(document.querySelectorAll('.stopsFilter:checked')).map(cb => parseInt(cb.value));
+                        const allowedAirlines = Array.from(document.querySelectorAll('.airlineFilter:checked')).map(cb => cb.value);
+                        
+                        document.querySelectorAll('.flight-card').forEach(card => {
+                            const price = parseFloat(card.dataset.price) || 0;
+                            const stops = parseInt(card.dataset.stops);
+                            const airline = card.dataset.airline;
+                            
+                            const priceMatch = price <= maxPrice || card.dataset.price === 'N/A';
+                            const stopsMatch = allowedStops.includes(stops) || (stops >= 2 && allowedStops.includes(2));
+                            const airlineMatch = allowedAirlines.includes(airline);
+                            
+                            if (priceMatch && stopsMatch && airlineMatch) {
+                                card.style.display = 'block';
+                            } else {
+                                card.style.display = 'none';
+                            }
+                        });
+                    }
+                </script>
             {% endif %}
         </div>
         {% endif %}

@@ -1,25 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Profile</title>
+    <title>Edit Profile</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
     <style>
         .profile-container {
             max-width: 420px;
             margin: 60px auto;
             background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 4px 24px rgba(44,62,80,0.08);
-            padding: 40px 32px 32px 32px;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+            padding: 36px 32px 28px 32px;
         }
         .profile-container h2 {
-            text-align: center;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
+            color: #232946;
+            font-size: 1.5em;
         }
         .profile-form label {
             font-weight: 500;
+            color: #4f5d75;
             margin-bottom: 6px;
-            display: block;
         }
         .profile-form input[type="text"],
         .profile-form input[type="email"],
@@ -27,61 +28,131 @@
             width: 100%;
             padding: 10px 12px;
             margin-bottom: 18px;
-            border: 1px solid #dbeafe;
+            border: 1px solid #e0e6ed;
             border-radius: 7px;
-            font-size: 1rem;
+            font-size: 1em;
+            background: #f7fafd;
+            transition: border 0.2s;
         }
-        .profile-form button {
+        .profile-form input:focus {
+            border: 1.5px solid #3f4e8c;
+            outline: none;
+            background: #fff;
+        }
+        .profile-btn {
             width: 100%;
-            background: #3498db;
+            padding: 12px 0;
+            background: #232946;
             color: #fff;
             border: none;
             border-radius: 7px;
-            padding: 12px 0;
-            font-size: 1.08rem;
+            font-size: 1.08em;
             font-weight: 600;
             cursor: pointer;
+            transition: background 0.2s;
             margin-bottom: 10px;
-        }
-        .profile-form .reset-link {
+            text-align: center;
             display: block;
-            text-align: right;
-            margin-bottom: 10px;
-            color: #3498db;
             text-decoration: none;
-            font-size: 0.98rem;
         }
-        .profile-form .reset-link:hover {
-            text-decoration: underline;
+        .profile-btn:hover {
+            background: #394867;
+        }
+        .secondary-btn {
+            background: #fff;
+            color: #232946;
+            border: 2px solid #232946;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+        .secondary-btn:hover {
+            background: #f5f7fa;
+            color: #232946;
+        }
+        .success-message {
+            color: #2ecc71;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .profile-pic-preview {
+            display: block;
+            margin: 0 auto 18px auto;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #232946;
+        }
+        .profile-pic-upload {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .custom-file-input {
+            display: none;
+        }
+        .custom-file-label {
+            background: #232946;
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 7px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            border: none;
+            display: inline-block;
+        }
+        .custom-file-label:hover {
+            background: #394867;
+        }
+        .file-name {
+            color: #4f5d75;
+            font-size: 0.98em;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
     <div class="profile-container">
-        <h2>My Profile</h2>
+        <h2>Edit Profile</h2>
         {% with messages = get_flashed_messages() %}
           {% if messages %}
-            <ul class="flashes">
-              {% for message in messages %}
-                <li>{{ message }}</li>
-              {% endfor %}
-            </ul>
+            <div class="success-message">{{ messages[0] }}</div>
           {% endif %}
         {% endwith %}
-        <form class="profile-form" method="post" action="/profile">
-            <label for="username">Username</label>
+        <form method="post" class="profile-form" enctype="multipart/form-data">
+            {% if user.profile_pic_url %}
+                <img src="{{ user.profile_pic_url }}" alt="Profile Picture" class="profile-pic-preview">
+            {% endif %}
+            <div class="profile-pic-upload">
+                <label for="profile_pic" class="custom-file-label">Choose Profile Picture</label>
+                <input type="file" id="profile_pic" name="profile_pic" accept="image/*" class="custom-file-input" onchange="updateFileName()">
+                <span id="file-name" class="file-name">No file chosen</span>
+            </div>
+
+            <label for="username">Username:</label>
             <input type="text" id="username" name="username" value="{{ user.username }}" required>
 
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" value="{{ user.email }}" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="{{ user.email or '' }}" required>
 
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Enter new password (leave blank to keep current)">
+            <label for="password">New Password:</label>
+            <input type="password" id="password" name="password" placeholder="Leave blank to keep current">
 
-            <a href="/forgot_password" class="reset-link">Forgot password?</a>
-
-            <button type="submit">Update Profile</button>
+            <button type="submit" class="profile-btn">Save Changes</button>
         </form>
+        <div class="back-btn-container">
+            <a href="{{ url_for('dashboard') }}" class="profile-btn secondary-btn">← Back to Dashboard</a>
+        </div>
     </div>
+    <script>
+    function updateFileName() {
+        var input = document.getElementById('profile_pic');
+        var fileName = input.files.length > 0 ? input.files[0].name : 'No file chosen';
+        document.getElementById('file-name').textContent = fileName;
+    }
+    </script>
 </body>
 </html>

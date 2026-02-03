@@ -260,3 +260,71 @@ ul {
   margin: 0 0 0 10px;
   padding: 0 0 0 15px;
 }
+
+.back-btn-container {
+    margin-top: 0;
+}
+
+.profile-btn {
+    width: 100%;
+    padding: 12px 0;
+    background: #232946;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-size: 1.08em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-bottom: 10px;
+    text-align: center;
+    display: block;
+    text-decoration: none;
+}
+
+.profile-btn:hover {
+    background: #394867;
+}
+
+.secondary-btn {
+    background: #fff;
+    color: #232946;
+    border: 2px solid #232946;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.secondary-btn:hover {
+    background: #f5f7fa;
+    color: #232946;
+}
+
+.profile-pic-upload {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+.custom-file-input {
+    display: none;
+}
+.custom-file-label {
+    background: #232946;
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 7px;
+    font-size: 1em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+    border: none;
+    display: inline-block;
+}
+.custom-file-label:hover {
+    background: #394867;
+}
+.file-name {
+    color: #4f5d75;
+    font-size: 0.98em;
+    font-style: italic;
+}

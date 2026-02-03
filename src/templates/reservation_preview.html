@@ -1,87 +1,202 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-        <title>Confirm Reservation</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
-        <style>
-            .preview-container {
-                max-width: 600px;
-                margin: 60px auto 0 auto;
-                background: #fff;
-                border-radius: 14px;
-                box-shadow: 0 4px 24px rgba(44,62,80,0.08);
-                padding: 40px 32px 32px 32px;
-            }
-            .preview-title {
-                text-align: center;
-                margin-bottom: 32px;
-                font-size: 2rem;
-                font-weight: 700;
-            }
-            .preview-details {
-                background: #f8fafc;
-                border-radius: 10px;
-                box-shadow: 0 2px 12px rgba(44,62,80,0.06);
-                padding: 24px 20px;
-                margin-bottom: 24px;
-                font-size: 1.08rem;
-                color: #232946;
-            }
-            .preview-details strong {
-                color: #232946;
-            }
-            .preview-btn {
-                display: block;
-                width: 100%;
-                background: #232946;
-                color: #fff;
-                padding: 12px 0;
-                border-radius: 6px;
-                text-decoration: none;
-                font-weight: 600;
-                font-size: 1.1rem;
-                margin-top: 18px;
-                border: none;
-                cursor: pointer;
-                transition: background 0.18s;
-            }
-            .preview-btn:hover {
-                background: #394867;
-            }
-            .back-link {
-                margin-top: 32px;
-                text-align: center;
-            }
-            .back-link a {
-                color: #3498db;
-                text-decoration: none;
-                font-weight: 500;
-                font-size: 1.08rem;
-            }
-            .back-link a:hover {
-                text-decoration: underline;
-            }
-        </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Your Flight</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .ticket-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .ticket-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+        }
+        .dashed-divider {
+            border-top: 2px dashed #e5e7eb;
+            position: relative;
+        }
+        .dashed-divider::before,
+        .dashed-divider::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: 50%;
+            top: -12px;
+        }
+        .dashed-divider::before {
+            left: -12px;
+        }
+        .dashed-divider::after {
+            right: -12px;
+        }
+    </style>
 </head>
-<body>
-    <div class="preview-container">
-        <div class="preview-title">Confirm Your Booking</div>
-        <div class="preview-details">
-            <div>
-                <strong>Airline:</strong> {{ airline_name }} ({{ flight['carrierCode'] }})<br>
-                <strong>From:</strong> {{ flight['departure']['city'] }} ({{ flight['departure']['iataCode'] }}) <strong>To:</strong> {{ flight['arrival']['city'] }} ({{ flight['arrival']['iataCode'] }})
+<body class="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto">
+        <!-- Back Button -->
+        <a href="/dashboard" class="inline-flex items-center text-slate-300 hover:text-white mb-6 transition-colors">
+            <i class="fas fa-arrow-left mr-2"></i>
+            <span class="font-medium">Back to Dashboard</span>
+        </a>
+
+        <!-- Premium Ticket Card -->
+        <div class="ticket-card bg-white rounded-3xl shadow-2xl overflow-hidden">
+            <!-- Header Section -->
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-blue-100 text-sm font-medium mb-1">Booking Confirmation</p>
+                        <h1 class="text-white text-2xl sm:text-3xl font-bold">Flight Ticket</h1>
+                    </div>
+                    <div class="bg-white/20 backdrop-blur-sm rounded-2xl px-4 py-3">
+                        <i class="fas fa-plane text-white text-3xl"></i>
+                    </div>
+                </div>
             </div>
-            <div style="margin-top: 10px;">
-                <strong>Departure:</strong> {{ flight['departure']['at'] }}<br>
-                <strong>Arrival:</strong> {{ flight['arrival']['at'] }}
+
+            <!-- Flight Route -->
+            <div class="px-8 py-8">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex-1 text-center">
+                        <p class="text-gray-500 text-sm font-medium mb-2">From</p>
+                        <p class="text-4xl sm:text-5xl font-bold text-gray-900">{{ flight['departure']['iataCode'] }}</p>
+                        <p class="text-gray-600 mt-2 font-medium">{{ flight['departure']['city'] }}</p>
+                    </div>
+                    
+                    <div class="flex-shrink-0 mx-4 sm:mx-8">
+                        <div class="bg-blue-50 rounded-full p-3 sm:p-4">
+                            <i class="fas fa-plane text-blue-600 text-2xl sm:text-3xl"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-1 text-center">
+                        <p class="text-gray-500 text-sm font-medium mb-2">To</p>
+                        <p class="text-4xl sm:text-5xl font-bold text-gray-900">{{ flight['arrival']['iataCode'] }}</p>
+                        <p class="text-gray-600 mt-2 font-medium">{{ flight['arrival']['city'] }}</p>
+                    </div>
+                </div>
+
+                <!-- Flight Details Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                    <!-- Departure Column -->
+                    <div class="bg-gray-50 rounded-2xl p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="bg-green-100 rounded-full p-2">
+                                <i class="fas fa-plane-departure text-green-600"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900">Departure</h3>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 text-sm">Time</span>
+                                <span class="text-gray-900 font-semibold">{{ flight['departure']['at']|format_datetime if flight['departure']['at'] is not string else flight['departure']['at'].split('T')[1][:5] if 'T' in flight['departure']['at'] else flight['departure']['at'] }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 text-sm">Date</span>
+                                <span class="text-gray-900 font-semibold">{{ flight['departure']['at']|format_date if flight['departure']['at'] is not string else flight['departure']['at'].split('T')[0] if 'T' in flight['departure']['at'] else flight['departure']['at'] }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 text-sm">Terminal</span>
+                                <span class="text-gray-900 font-semibold">{{ flight['departure'].get('terminal', 'TBA') }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Arrival Column -->
+                    <div class="bg-gray-50 rounded-2xl p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="bg-blue-100 rounded-full p-2">
+                                <i class="fas fa-plane-arrival text-blue-600"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900">Arrival</h3>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 text-sm">Time</span>
+                                <span class="text-gray-900 font-semibold">{{ flight['arrival']['at']|format_datetime if flight['arrival']['at'] is not string else flight['arrival']['at'].split('T')[1][:5] if 'T' in flight['arrival']['at'] else flight['arrival']['at'] }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 text-sm">Date</span>
+                                <span class="text-gray-900 font-semibold">{{ flight['arrival']['at']|format_date if flight['arrival']['at'] is not string else flight['arrival']['at'].split('T')[0] if 'T' in flight['arrival']['at'] else flight['arrival']['at'] }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 text-sm">Terminal</span>
+                                <span class="text-gray-900 font-semibold">{{ flight['arrival'].get('terminal', 'TBA') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashed Divider with circles -->
+                <div class="dashed-divider my-8"></div>
+
+                <!-- Ticket Summary Section -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Ticket Summary</h3>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-gray-500 text-sm mb-1">Airline</p>
+                            <p class="text-gray-900 font-semibold">{{ airline_name }}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-sm mb-1">Flight Code</p>
+                            <p class="text-gray-900 font-semibold">{{ flight['carrierCode'] }}-{{ flight.get('number', 'XXX') }}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-sm mb-1">Class</p>
+                            <p class="text-gray-900 font-semibold">Economy</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-sm mb-1">Passengers</p>
+                            <p class="text-gray-900 font-semibold">1 Adult</p>
+                        </div>
+                    </div>
+
+                    <!-- Important Notice -->
+                    <div class="bg-amber-50 border-l-4 border-amber-500 rounded-lg p-4 mt-6">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-info-circle text-amber-600 mt-1"></i>
+                            <div>
+                                <p class="text-amber-900 font-semibold text-sm mb-1">Important Notice</p>
+                                <p class="text-amber-800 text-sm">Please arrive at the airport at least 2 hours before departure for domestic flights and 3 hours for international flights.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Section -->
+            <div class="bg-gray-50 px-8 py-6">
+                <form method="post" action="{{ url_for('confirm_booking') }}">
+                    <input type="hidden" name="flight_data" value='{{ flight_data | tojson | safe }}'>
+                    <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-6 rounded-xl text-lg shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Confirm Booking
+                    </button>
+                </form>
+                
+                <p class="text-center text-gray-500 text-sm mt-4">
+                    By confirming, you agree to the terms and conditions
+                </p>
             </div>
         </div>
-        <form method="post" action="{{ url_for('confirm_booking') }}">
-            <input type="hidden" name="flight_data" value='{{ flight_data | tojson | safe }}'>
-            <button type="submit" class="preview-btn">Confirm Booking</button>
-        </form>
-        <div class="back-link">
-            <a href="/dashboard">&larr; Back to Dashboard</a>
+
+        <!-- Additional Info -->
+        <div class="mt-6 text-center">
+            <p class="text-slate-400 text-sm">
+                <i class="fas fa-lock mr-1"></i>
+                Your booking is secure and encrypted
+            </p>
         </div>
     </div>
 </body>

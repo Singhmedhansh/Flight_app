@@ -1,5 +1,5 @@
-from ..models.account import Account
-from ..config.database_config import get_db_connection  # type: ignore
+from models.account import Account
+from config.database_config import get_db_connection  # type: ignore
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class UserController:
