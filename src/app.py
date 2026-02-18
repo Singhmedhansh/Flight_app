@@ -10,11 +10,19 @@ import os
 from datetime import datetime
 from airport_utils import load_airport_cities
 from amadeus import Client
+from dotenv import load_dotenv
 
-amadeus = Client(
-    client_id='TJ7cIHspFiHzdZfVAJKDFgDxTxLYOZqs',
-    client_secret='tacsrVrT08fkAhAb'
-)
+load_dotenv()
+
+amadeus_client_id = os.getenv('AMADEUS_CLIENT_ID')
+amadeus_client_secret = os.getenv('AMADEUS_CLIENT_SECRET')
+
+amadeus = None
+if amadeus_client_id and amadeus_client_secret:
+    amadeus = Client(
+        client_id=amadeus_client_id,
+        client_secret=amadeus_client_secret,
+    )
 
 import csv
 
@@ -40,8 +48,11 @@ for k in CITY_TO_AIRPORT:
 print(f"Loaded {len(CITY_TO_AIRPORT)} city/airport mappings.")
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
-reservation_controller = ReservationController()
+app.secret_key = os.getenv('FLASK_SECRET_KEY', 'change-me-in-production')
+try:
+    reservation_controller = ReservationController()
+except Exception:
+    reservation_controller = None
 flight_controller = FlightController()
 
 # Custom Jinja2 filters for datetime formatting

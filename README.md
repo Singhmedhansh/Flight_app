@@ -1,38 +1,137 @@
-# Flight Booker
+# Flight Management System
 
-A Flask-based flight booking application with seat selection, confirmation, and digital ticketing.
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-2.x-black?logo=flask&logoColor=white)
+
+## Overview
+
+**A real-time flight search and price comparison engine built with Flask and the Amadeus API.**
+
+This project provides an end-to-end flight discovery and booking-oriented workflow with a clean web interface, live flight data integration, and backend persistence for passenger and reservation operations.
 
 ## Features
-- Flight search and filtering
-- Seat selection flow
-- Confirmation step before booking
-- Digital ticket with QR code
-- Reservations history
+
+- Real-time API data fetching
+- Dynamic search (source, destination, date)
+- SQL-based passenger management
+- Responsive UI
 
 ## Tech Stack
-- Flask (Python)
-- MySQL (via mysql-connector)
-- Amadeus API (flight data)
-- Tailwind CSS (CDN)
+
+- Python
+- Flask
+- Amadeus SDK
+- SQL
+- HTML/CSS
 
 ## Setup
-1. Create and activate a virtual environment.
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Configure database credentials in `src/config/database_config.py`.
-4. Run the app:
-   ```bash
-   python src/app.py
-   ```
 
-## Notes
-- The app uses session-based storage for bookings in the UI flow.
-- Ensure the MySQL database is reachable for auth and other DB-backed features.
+### 1) Clone the repository
 
-## Project Structure
-- `src/app.py`: Flask app and routes
-- `src/templates/`: Jinja2 templates
-- `src/static/`: CSS and assets
-- `src/config/`: DB and API configuration
+```bash
+git clone <your-repo-url>
+cd Flight_app
+```
+
+### 2) Create and activate a virtual environment
+
+**Windows (PowerShell):**
+
+```bash
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+```
+
+**macOS/Linux:**
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### 3) Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4) Configure credentials
+
+- Copy `.env.example` to a local `.env` file.
+- Set your Amadeus credentials in `.env`:
+
+```bash
+AMADEUS_CLIENT_ID=your_amadeus_client_id_here
+AMADEUS_CLIENT_SECRET=your_amadeus_client_secret_here
+```
+
+- Keep `.env` private (it is gitignored by default).
+
+### 5) Run the application
+
+```bash
+python src/app.py
+```
+
+## Runbook for Other Developers
+
+### 1) Create and activate a virtual environment
+
+**Windows (PowerShell):**
+
+```bash
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+```
+
+**macOS/Linux:**
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### 2) Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3) Configure your environment file
+
+```bash
+cp .env.example .env
+```
+
+Windows PowerShell alternative:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Set values in `.env` for:
+
+- `AMADEUS_CLIENT_ID`
+- `AMADEUS_CLIENT_SECRET`
+
+### 4) Run the app
+
+```bash
+flask run
+```
+
+### 5) Run tests
+
+```bash
+pytest
+```
+
+## Security Best Practice
+
+- Never hardcode API keys in source files.
+- Keep secrets only in local `.env` or your deployment platform's secret manager.
+- If any credential was previously committed, rotate it immediately in the provider dashboard.
+
+## Developer Note
+
+This project was developed by a **B.Tech CS-AI/ML student at RVCE**.
