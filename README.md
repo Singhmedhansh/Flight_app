@@ -73,58 +73,6 @@ AMADEUS_CLIENT_SECRET=your_amadeus_client_secret_here
 python src/app.py
 ```
 
-## Runbook for Other Developers
-
-### 1) Create and activate a virtual environment
-
-**Windows (PowerShell):**
-
-```bash
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-```
-
-**macOS/Linux:**
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-### 2) Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 3) Configure your environment file
-
-```bash
-cp .env.example .env
-```
-
-Windows PowerShell alternative:
-
-```powershell
-Copy-Item .env.example .env
-```
-
-Set values in `.env` for:
-
-- `AMADEUS_CLIENT_ID`
-- `AMADEUS_CLIENT_SECRET`
-
-### 4) Run the app
-
-```bash
-flask run
-```
-
-### 5) Run tests
-
-```bash
-pytest
-```
 
 ## Security Best Practice
 
